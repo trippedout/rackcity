@@ -99,9 +99,23 @@ function getLocationSuccess(position)
     $("#info").html("Latitude: " + position.coords.latitude + 
     "<br>Longitude: " + position.coords.longitude); 
 
-    RackCity.init();
+    //grab test location data
+    getTestData();
+}
 
-    animate();
+function getTestData() 
+{
+	console.log("getTestData()");
+	$.getJSON( "data/nyc.js")
+	.done(function(data) {
+		$("#loading").html("");
+	    RackCity.init(data.features);
+	    animate();
+	})
+	.fail(function(jqXHR, textStatus, errorThrown){
+		//show error msg
+		console.log(jqXHR);
+	});
 }
 
 function showError(error) {
@@ -128,7 +142,7 @@ function animate() {
 }
 
 function render() {
-	// LoopVisualizer.update();
+	RackCity.update();
 
 	var xrot = mouseX/window.innerWidth * Math.PI*2 + Math.PI;
 	var yrot = mouseY/window.innerHeight* Math.PI*2 + Math.PI;

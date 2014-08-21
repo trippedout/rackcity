@@ -1,8 +1,8 @@
 var RackCity = (function() {
 
-	function init() 
+	function init(features) 
 	{
-		console.log("RackCity::init()");
+		console.log("RackCity::init()\n" + features);
 
 	}
 
