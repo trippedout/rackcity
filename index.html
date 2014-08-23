@@ -8,15 +8,20 @@
 <link href="css/styles.css" rel="stylesheet" type="text/css">
 </head>
 <h1>Rack City</h1>
+<form id="sc_form">
+	<input type="text" id="sc_url" name="url" placeholder="soundcloud url" value="https://soundcloud.com/savoyband/chromeo-jealous-savoy-remix"/>
+	<input type="submit"/>
+</form>
 <div id="loading"></div>
 <div id="info">Cool Shit</div>
-<canvas id="debugCtx" width=1024 height=200></canvas>
-<script src="js/ram.js"></script>
-<script src="js/stats.js"></script>
+<canvas id="debugCtx" width=5 height=5></canvas>
 <script src="//cdnjs.cloudflare.com/ajax/libs/three.js/r68/three.min.js"></script>
 <script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
+<script src="//connect.soundcloud.com/sdk.js"></script>
 <!-- <script src="js/jquery.mousewheel.js"></script>
 <script src="js/ImprovedNoise.js"></script>-->
+<script src="js/ram.js"></script>
+<script src="js/stats.js"></script>
 <script src="js/RackCity.js"></script> 
 <script src="js/main.js"></script>
 </body>

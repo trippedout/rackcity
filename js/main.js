@@ -3,6 +3,7 @@
 **/
 
 var mouseX = 0, mouseY = 0, windowHalfX = window.innerWidth / 2, windowHalfY = window.innerHeight / 2, camera, scene, renderer, material, container;
+var sc_client_id = '08b1532d93712c611b7a82da20ac52ca';
 var source;
 var analyser;
 var buffer;
@@ -35,6 +36,7 @@ $(document).ready(function()
 
 	//shit works - init!
 	init();
+	initSoundcloud();
 	getLocation();
 });
 
@@ -74,7 +76,30 @@ function init() {
 	document.addEventListener('dragover', onDocumentDragOver, false);
 
 	onWindowResize(null);
-	audioContext = new window.webkitAudioContext();
+}
+
+
+function initSoundcloud()
+{
+	SC.initialize({
+	  client_id: sc_client_id
+	});
+
+	$("#sc_form").submit(function(event)
+	{
+		event.preventDefault();
+
+		SC.get('/resolve', { url: $("#sc_url").val() }, function(track) {
+
+			if(!track.errors)			
+				RackCity.initAudio(track.stream_url + "?client_id=" + sc_client_id);
+			else
+			{
+				console.log("oops: ");
+				console.log(track.errors[0].error_message)
+			}
+		});
+	});
 }
 
 /**
