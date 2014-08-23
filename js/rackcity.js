@@ -2,19 +2,19 @@ var RackCity = (function()
 {
 	var all_features;
 
-	function init(features) 
+	function init(data) 
 	{
 		console.log("RackCity::init()");
-		console.log(features[0]);
+		console.log(data['buildings']);
 
-		all_features = features;
+		all_features = data;
 	}
 
 
 	function initAudio(url)
 	{	
 		console.log("RackCity::initAudio() " + url);
-		
+
 		audioContext = new window.webkitAudioContext();
 
 		source = audioContext.createBufferSource();

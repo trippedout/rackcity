@@ -124,23 +124,33 @@ function getLocationSuccess(position)
     $("#info").html("Latitude: " + position.coords.latitude + 
     "<br>Longitude: " + position.coords.longitude); 
 
+    var url = "proxy/getLocation.php?lat=" + position.coords.latitude + "&lon=" + position.coords.longitude;
+	$.getJSON(url)
+	.done(function(data){		
+		RackCity.init(data);
+	})
+	.fail(function(error){
+		console.log(error);
+	});
     //grab test location data
-    getTestData();
+    // getTestData();
 }
 
 function getTestData() 
 {
-	console.log("getTestData()");
-	$.getJSON( "data/nyc.js")
-	.done(function(data) {
-		$("#loading").html("");
-	    RackCity.init(data.features);
-	    animate();
-	})
-	.fail(function(jqXHR, textStatus, errorThrown){
-		//show error msg
-		console.log(jqXHR);
-	});
+	// console.log("getTestData()");
+	// $.getJSON( "data/nyc.js")
+	// .done(function(data) {
+	// 	$("#loading").html("");
+	//     RackCity.init(data.features);
+	//     animate();
+	// })
+	// .fail(function(jqXHR, textStatus, errorThrown){
+	// 	//show error msg
+	// 	console.log(jqXHR);
+	// });
+
+	// $.getJSON("proxy/getLocation.php?lat=" +)
 }
 
 function showError(error) {
