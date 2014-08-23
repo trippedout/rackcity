@@ -29,12 +29,6 @@ $endpoint = 'http://overpass-api.de/api/interpreter';
 $json = file_get_contents($endpoint, false, $context);
 $base = json_decode($json, TRUE);
 
-// echo json_encode($base['elements']);
-
-$jsonIterator = new RecursiveIteratorIterator(
-    new RecursiveArrayIterator($base['elements']),
-    RecursiveIteratorIterator::SELF_FIRST);
-
 $small_roads = array();
 $large_roads = array();
 $buildings = array();
