@@ -46,7 +46,10 @@ function init() {
 	container = document.createElement('div');
 	document.body.appendChild(container);
 	camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000000);
-	camera.position.z = 2000;
+	camera.position.z = 1000;
+	camera.position.y = 500;
+	camera.lookAt(new THREE.Vector3(0,0,0));
+
 	scene = new THREE.Scene();
 	scene.add(camera);
 	renderer = new THREE.WebGLRenderer({
@@ -125,9 +128,16 @@ function getLocationSuccess(position)
     "<br>Longitude: " + position.coords.longitude); 
 
     var url = "proxy/getLocation.php?lat=" + position.coords.latitude + "&lon=" + position.coords.longitude;
+	var center_pt = [position.coords.longitude, position.coords.latitude];
+
+	//testing
+	url = 'data/nyc.js';
+
 	$.getJSON(url)
 	.done(function(data){		
-		RackCity.init(data);
+		$("#loading").html("");
+		RackCity.init(data, center_pt);
+		animate();
 	})
 	.fail(function(error){
 		console.log(error);
@@ -179,8 +189,12 @@ function animate() {
 function render() {
 	RackCity.update();
 
-	var xrot = mouseX/window.innerWidth * Math.PI*2 + Math.PI;
-	var yrot = mouseY/window.innerHeight* Math.PI*2 + Math.PI;
+	// var xrot = mouseX/window.innerWidth * Math.PI*2 + Math.PI;
+	// var yrot = mouseY/window.innerHeight* Math.PI*2 + Math.PI;
+
+	// camera.position.x = (Math.sin( xrot) * 600 );
+	// camera.position.y = 230;
+	// camera.position.z = (Math.cos( yrot) * 600);
 
 	// LoopVisualizer.loopHolder.rotation.x += (-yrot - LoopVisualizer.loopHolder.rotation.x) * 0.3;
 	// LoopVisualizer.loopHolder.rotation.y += (xrot - LoopVisualizer.loopHolder.rotation.y) * 0.3;
