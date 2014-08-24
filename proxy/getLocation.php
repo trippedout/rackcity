@@ -18,11 +18,11 @@ $query = '[out:json];
 );
 out;';
 
-$context = stream_context_create(['http' => [
+$context = stream_context_create( array('http' => array(
     'method'  => 'POST',
-    'header' => ['Content-Type: application/x-www-form-urlencoded'],
+    'header' => array('Content-Type: application/x-www-form-urlencoded'),
     'content' => 'data=' . urlencode($query),
-]]);
+)));
 
 $endpoint = 'http://overpass-api.de/api/interpreter';
 
