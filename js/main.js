@@ -132,7 +132,7 @@ function getLocationSuccess(position)
 	var center_pt = [position.coords.longitude, position.coords.latitude];
 
 	//testing
-	url = 'data/nyc.js';
+	// url = 'data/nyc.js';
 
 	$.getJSON(url)
 	.done(function(data){		

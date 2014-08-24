@@ -16,6 +16,12 @@ var RackCity = (function()
 		//get center pt xy projection for normalizing other points
 		center_xy = proj4('EPSG:4326', 'EPSG:3785', center_pt);
 
+		//place sphere at center for knowing
+		var geometry = new THREE.SphereGeometry( 5, 32, 32 );
+		var material = new THREE.MeshBasicMaterial( {color: 0xff0000} );
+		var sphere = new THREE.Mesh( geometry, material );
+		scene.add( sphere );
+
 		drawShit(small_roads, new THREE.LineBasicMaterial({
 	        color: 0xffffff
 	    }));
