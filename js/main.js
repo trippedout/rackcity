@@ -53,9 +53,10 @@ function init() {
 	scene = new THREE.Scene();
 	scene.add(camera);
 	renderer = new THREE.WebGLRenderer({
-		antialias : false,
+		antialias : true,
 		sortObjects : false
 	});
+	
 	renderer.setSize(window.innerWidth, window.innerHeight);
 
 	container.appendChild(renderer.domElement);
