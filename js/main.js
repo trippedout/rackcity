@@ -4,6 +4,7 @@
 
 var mouseX = 0, mouseY = 0, windowHalfX = window.innerWidth / 2, windowHalfY = window.innerHeight / 2, camera, scene, renderer, material, container;
 var sc_client_id = '08b1532d93712c611b7a82da20ac52ca';
+var controls;
 var source;
 var analyser;
 var buffer;
@@ -50,13 +51,15 @@ function init() {
 	camera.position.y = 500;
 	camera.lookAt(new THREE.Vector3(0,0,0));
 
+	controls = new THREE.TrackballControls( camera );
+
 	scene = new THREE.Scene();
 	scene.add(camera);
 	renderer = new THREE.WebGLRenderer({
 		antialias : true,
 		sortObjects : false
 	});
-	
+
 	renderer.setSize(window.innerWidth, window.innerHeight);
 
 	container.appendChild(renderer.domElement);
@@ -183,24 +186,14 @@ function showError(error) {
 
 function animate() {
 	requestAnimationFrame(animate);
+	controls.update();
 	render();
-	stats.update();
 }
 
 function render() {
 	RackCity.update();
-
-	// var xrot = mouseX/window.innerWidth * Math.PI*2 + Math.PI;
-	// var yrot = mouseY/window.innerHeight* Math.PI*2 + Math.PI;
-
-	// camera.position.x = (Math.sin( xrot) * 600 );
-	// camera.position.y = 230;
-	// camera.position.z = (Math.cos( yrot) * 600);
-
-	// LoopVisualizer.loopHolder.rotation.x += (-yrot - LoopVisualizer.loopHolder.rotation.x) * 0.3;
-	// LoopVisualizer.loopHolder.rotation.y += (xrot - LoopVisualizer.loopHolder.rotation.y) * 0.3;
-
 	renderer.render(scene, camera);
+	stats.update();
 }
 
 /**
