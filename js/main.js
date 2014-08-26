@@ -3,6 +3,8 @@
 **/
 
 var mouseX = 0, mouseY = 0, windowHalfX = window.innerWidth / 2, windowHalfY = window.innerHeight / 2, camera, scene, renderer, material, container;
+var width = window.innerWidth;
+var height = window.innerHeight;
 var sc_client_id = '08b1532d93712c611b7a82da20ac52ca';
 var controls;
 var source;
@@ -15,6 +17,14 @@ var source;
 var processor;
 var xhr;
 var started = false;
+
+var postprocessing = { enabled  : true };
+
+var shaderSettings = {
+	rings: 3,
+	samples: 4
+};
+var material_depth;
 
 $(document).ready(function() 
 {
@@ -51,8 +61,6 @@ function init() {
 	camera.position.y = 500;
 	camera.lookAt(new THREE.Vector3(0,0,0));
 
-	controls = new THREE.TrackballControls( camera );
-
 	scene = new THREE.Scene();
 	scene.add(camera);
 	renderer = new THREE.WebGLRenderer({
@@ -61,8 +69,14 @@ function init() {
 	});
 
 	renderer.setSize(window.innerWidth, window.innerHeight);
+	
+	initPostprocessing();
+
+	renderer.autoClear = false;
 
 	container.appendChild(renderer.domElement);
+
+	controls = new THREE.TrackballControls( camera, renderer.domElement );
 
 	// stop the user getting a text cursor
 	document.onselectStart = function() {
@@ -79,10 +93,138 @@ function init() {
 	// $("#loadSample").click( loadSampleAudio);
 	$(document).mousemove(onDocumentMouseMove);
 	$(window).resize(onWindowResize);
-	document.addEventListener('drop', onDocumentDrop, false);
-	document.addEventListener('dragover', onDocumentDragOver, false);
+	// document.addEventListener('drop', onDocumentDrop, false);
+	// document.addEventListener('dragover', onDocumentDragOver, false);
+
+	var effectController  = {
+
+		enabled: true,
+		jsDepthCalculation: true,
+		shaderFocus: false,
+
+		fstop: 2.2,
+		maxblur: 1.0,
+
+		showFocus: false,
+		focalDepth: 2.8,
+		manualdof: false,
+		vignetting: false,
+		depthblur: false,
+
+		threshold: 0.5,
+		gain: 2.0,
+		bias: 0.5,
+		fringe: 0.7,
+
+		focalLength: 35,
+		noise: true,
+		pentagon: false,
+
+		dithering: 0.0001
+
+	};
+
+	var matChanger = function( ) {
+
+		for (var e in effectController) {
+			if (e in postprocessing.bokeh_uniforms)
+			postprocessing.bokeh_uniforms[ e ].value = effectController[ e ];
+		}
+
+		postprocessing.enabled = effectController.enabled;
+		postprocessing.bokeh_uniforms[ 'znear' ].value = camera.near;
+		postprocessing.bokeh_uniforms[ 'zfar' ].value = camera.far;
+		camera.setLens(effectController.focalLength);
+
+	};
+
+	var gui = new dat.GUI();
+
+	gui.add( effectController, "enabled" ).onChange( matChanger );
+	gui.add( effectController, "jsDepthCalculation" ).onChange( matChanger );
+	gui.add( effectController, "shaderFocus" ).onChange( matChanger );
+	gui.add( effectController, "focalDepth", 0.0, 200.0 ).listen().onChange( matChanger );
+
+	gui.add( effectController, "fstop", 0.1, 22, 0.001 ).onChange( matChanger );
+	gui.add( effectController, "maxblur", 0.0, 5.0, 0.025 ).onChange( matChanger );
+
+	gui.add( effectController, "showFocus" ).onChange( matChanger );
+	gui.add( effectController, "manualdof" ).onChange( matChanger );
+	gui.add( effectController, "vignetting" ).onChange( matChanger );
+
+	gui.add( effectController, "depthblur" ).onChange( matChanger );
+
+	gui.add( effectController, "threshold", 0, 1, 0.001 ).onChange( matChanger );
+	gui.add( effectController, "gain", 0, 100, 0.001 ).onChange( matChanger );
+	gui.add( effectController, "bias", 0,3, 0.001 ).onChange( matChanger );
+	gui.add( effectController, "fringe", 0, 5, 0.001 ).onChange( matChanger );
+
+	gui.add( effectController, "focalLength", 16, 80, 0.001 ).onChange( matChanger )
+
+	gui.add( effectController, "noise" ).onChange( matChanger );
+
+	gui.add( effectController, "dithering", 0, 0.001, 0.0001 ).onChange( matChanger );
+
+	gui.add( effectController, "pentagon" ).onChange( matChanger );
+
+	gui.add( shaderSettings, "rings", 1, 8).step(1).onChange( shaderUpdate );
+	gui.add( shaderSettings, "samples", 1, 13).step(1).onChange( shaderUpdate );
+
+	matChanger();
 
 	onWindowResize(null);
+}
+
+function initPostprocessing() {
+
+	postprocessing.scene = new THREE.Scene();
+
+	postprocessing.camera = new THREE.OrthographicCamera( window.innerWidth / - 2, window.innerWidth / 2,  window.innerHeight / 2, window.innerHeight / - 2, -10000, 10000 );
+	postprocessing.camera.position.z = 100;
+
+	postprocessing.scene.add( postprocessing.camera );
+
+	var pars = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBFormat };
+	postprocessing.rtTextureDepth = new THREE.WebGLRenderTarget( window.innerWidth, height, pars );
+	postprocessing.rtTextureColor = new THREE.WebGLRenderTarget( window.innerWidth, height, pars );
+
+	material_depth = new THREE.MeshDepthMaterial();
+
+	var bokeh_shader = THREE.BokehShader;
+
+	postprocessing.bokeh_uniforms = THREE.UniformsUtils.clone( bokeh_shader.uniforms );
+
+	postprocessing.bokeh_uniforms[ "tColor" ].value = postprocessing.rtTextureColor;
+	postprocessing.bokeh_uniforms[ "tDepth" ].value = postprocessing.rtTextureDepth;
+
+	postprocessing.bokeh_uniforms[ "textureWidth" ].value = window.innerWidth;
+
+	postprocessing.bokeh_uniforms[ "textureHeight" ].value = height;
+
+	postprocessing.materialBokeh = new THREE.ShaderMaterial( {
+
+		uniforms: postprocessing.bokeh_uniforms,
+		vertexShader: bokeh_shader.vertexShader,
+		fragmentShader: bokeh_shader.fragmentShader,
+		defines: {
+			RINGS: shaderSettings.rings,
+			SAMPLES: shaderSettings.samples
+		}
+
+	} );
+
+	postprocessing.quad = new THREE.Mesh( new THREE.PlaneGeometry( window.innerWidth, window.innerHeight ), postprocessing.materialBokeh );
+	postprocessing.quad.position.z = - 500;
+	postprocessing.scene.add( postprocessing.quad );
+
+}
+
+function shaderUpdate() {
+	postprocessing.materialBokeh.defines.RINGS = shaderSettings.rings;
+	postprocessing.materialBokeh.defines.SAMPLES = shaderSettings.samples;
+
+	postprocessing.materialBokeh.needsUpdate = true;
+
 }
 
 
@@ -146,31 +288,12 @@ function getLocationSuccess(position)
 	.fail(function(error){
 		console.log(error);
 	});
-    //grab test location data
-    // getTestData();
-}
-
-function getTestData() 
-{
-	// console.log("getTestData()");
-	// $.getJSON( "data/nyc.js")
-	// .done(function(data) {
-	// 	$("#loading").html("");
-	//     RackCity.init(data.features);
-	//     animate();
-	// })
-	// .fail(function(jqXHR, textStatus, errorThrown){
-	// 	//show error msg
-	// 	console.log(jqXHR);
-	// });
-
-	// $.getJSON("proxy/getLocation.php?lat=" +)
 }
 
 function showError(error) {
     switch(error.code) {
         case error.PERMISSION_DENIED:
-            $("#info").html("User denied the request for Geolocation.");
+            $("#info").html("User denied the request for Geolocation."); //TODO - setup listbox choice
             break;
         case error.POSITION_UNAVAILABLE:
              $("#info").html("Location information is unavailable.");
@@ -188,12 +311,37 @@ function animate() {
 	requestAnimationFrame(animate);
 	controls.update();
 	render();
+	stats.update();
 }
 
 function render() {
 	RackCity.update();
-	renderer.render(scene, camera);
-	stats.update();
+	if ( postprocessing.enabled ) {
+		renderer.clear();
+
+		// Render scene into texture
+
+		scene.overrideMaterial = null;
+		renderer.render( scene, camera, postprocessing.rtTextureColor, true );
+
+		// Render depth into texture
+
+		scene.overrideMaterial = material_depth;
+		renderer.render( scene, camera, postprocessing.rtTextureDepth, true );
+
+		// Render bokeh composite
+
+		renderer.render( postprocessing.scene, postprocessing.camera );
+
+
+	} else {
+
+		scene.overrideMaterial = null;
+
+		renderer.clear();
+		renderer.render( scene, camera );
+
+	}
 }
 
 /**
@@ -208,9 +356,15 @@ function onDocumentMouseMove(event) {
 function onWindowResize(event) {
 	windowHalfX = window.innerWidth / 2;
 	windowHalfY = window.innerHeight / 2;
+
+	width = window.innerWidth;
+	height = window.innerHeight;
+
 	camera.aspect = window.innerWidth / window.innerHeight;
 	camera.updateProjectionMatrix();
-	renderer.setSize(window.innerWidth, window.innerHeight);
+
+	renderer.setSize( window.innerWidth, window.innerHeight );
+	// postprocessing.composer.setSize( width, height );
 }
 
 function onDocumentDragOver(evt) {
