@@ -1,4 +1,6 @@
-
+<?php 
+$testLocal = TRUE;
+?>
 <!doctype html>
 <html lang="en">
 <head>
@@ -15,12 +17,21 @@
 <div id="loading"></div>
 <div id="info">Cool Shit</div>
 <canvas id="debugCtx" width=5 height=5></canvas>
-<script src="//cdnjs.cloudflare.com/ajax/libs/three.js/r68/three.min.js"></script>
+<?php 
+if(!$testLocal)
+	echo '<script src="//cdnjs.cloudflare.com/ajax/libs/three.js/r68/three.min.js"></script>
 <script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
 <script src="//connect.soundcloud.com/sdk.js"></script>
-<script src="js/TrackballControls.js"></script>
+';
+else
+	echo '<script src="js/three.min.js"></script>
+<script src="js/jquery-2.1.1.min.js"></script>
+<script src="js/soundcloud.js"></script>
+';
+?>
 <!-- <script src="js/jquery.mousewheel.js"></script>
 <script src="js/ImprovedNoise.js"></script>-->
+<script src="js/TrackballControls.js"></script>
 <script src="js/ram.js"></script>
 <script src="js/stats.js"></script>
 <script src="js/proj4.js"></script> 

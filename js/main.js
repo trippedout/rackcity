@@ -297,6 +297,7 @@ function showError(error) {
             break;
         case error.POSITION_UNAVAILABLE:
              $("#info").html("Location information is unavailable.");
+             loadFakeData();
             break;
         case error.TIMEOUT:
              $("#info").html("The request to get user location timed out.");
