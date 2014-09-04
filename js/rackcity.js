@@ -1,7 +1,16 @@
-var RackCity = (function() 
+define(function (require) 
 {
+	var proj4 = require('proj4');
+
+	var scene;
+
 	var all_features, small_roads, large_roads, buildings;
 	var center_xy;
+
+	function setup(sc)
+	{
+		scene = sc;
+	}
 
 	function init(data, center_pt) 
 	{
@@ -195,8 +204,9 @@ var RackCity = (function()
 	}
 
 	return {
+		setup:setup,
 		init:init,
 		initAudio:initAudio,
 		update:update
 	};
-}());
+});

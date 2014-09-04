@@ -1,5 +1,5 @@
 <?php 
-$testLocal = TRUE;
+$testLocal = FALSE;
 ?>
 <!doctype html>
 <html lang="en">
@@ -29,15 +29,8 @@ else
 <script src="js/soundcloud.js"></script>
 ';
 ?>
-<!-- <script src="js/jquery.mousewheel.js"></script>
-<script src="js/ImprovedNoise.js"></script>-->
-<script src="js/TrackballControls.js"></script>
-<script src="js/ram.js"></script>
-<script src="js/stats.js"></script>
-<script src="js/proj4.js"></script> 
-<script src="js/shaders/BokehShader2.js"></script>
+
 <script src="js/dat.gui.min.js"></script>
-<script src="js/rackcity.js"></script> 
-<script src="js/main.js"></script>
+<script data-main="app" src="js/require.js"></script>
 </body>
 </html>
