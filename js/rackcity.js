@@ -12,7 +12,7 @@ define(function (require)
 		scene = sc;
 	}
 
-	function init(data, center_pt) 
+	function init3D(data, center_pt) 
 	{
 		console.log("RackCity::init()");
 		console.log(data);
@@ -161,10 +161,17 @@ define(function (require)
 	{	
 		console.log("RackCity::initAudio() " + url);
 
-		audioContext = new window.webkitAudioContext();
+		window.AudioContext = window.AudioContext || window.webkitAudioContext;
+		var audioContext = new AudioContext();
+
+		var source;
+		var analyser;
+		var buffer;
+		var audioBuffer;
 
 		source = audioContext.createBufferSource();
 		analyser = audioContext.createAnalyser();
+		analyser.smoothingTimeConstant = 0.3;
 		analyser.fftSize = 1024;
 
 		// Connect audio processing graph
@@ -176,12 +183,67 @@ define(function (require)
 		request.open("GET", url, true);
 		request.responseType = "arraybuffer";
 
-		console.log(url);
+		
+		
+		// Create the audio graph.
+		var filter = audioContext.createBiquadFilter();
+		// Create and specify parameters for the low-pass filter.
+		filter.type = 0; // Low-pass filter. See BiquadFilterNode docs
+		filter.frequency.value = 110; // Set cutoff to 440 HZ
+		filter.gain.value = -20;
+
+				source.connect(filter);
+				console.log(filter);
+				filter.connect(audioContext.destination);
+				
+
+		var javascriptNode = audioContext.createScriptProcessor(4096, 1, 1);
+        // connect to destination, else it isn't called
+        // javascriptNode.connect(audioContext.destination);
+        javascriptNode.onaudioprocess = function() {
+ 
+	        // get the average, bincount is fftsize / 2
+	        var array =  new Uint8Array(analyser.frequencyBinCount);
+	        analyser.getByteFrequencyData(array);
+	        var average = getAverageVolume(array)
+	 
+	        console.log(array);
+
+	        // // clear the current state
+	        // ctx.clearRect(0, 0, 60, 130);
+	 
+	        // // set the fill style
+	        // ctx.fillStyle=gradient;
+	 
+	        // // create the meters
+	        // ctx.fillRect(0,130-average,25,130);
+	    }
+	 
+	    function getAverageVolume(array) {
+	        var values = 0;
+	        var average;
+	 
+	        var length = array.length;
+	 
+	        // get all the frequency amplitudes
+	        for (var i = 0; i < length; i++) {
+	            values += array[i];
+	        }
+	 
+	        average = values / length;
+	        return average;
+	    }
+
 
 		request.onload = function() {
 			audioContext.decodeAudioData(request.response, function(buffer) {
-				audioBuffer = buffer;
-				finishLoad();
+				source.buffer = buffer;
+				source.loop = true;
+				// filter.connect(analyser);
+				// analyser.connect(javascriptNode);
+				// analyser.connect(audioContext.destination);
+				source.start(0.0);
+				// finishLoad();
 			}, function(e) {
 				console.log("error" + e);
 			});
@@ -191,12 +253,12 @@ define(function (require)
 		request.send();
 	}
 
-	function finishLoad() {
-		source.buffer = audioBuffer;
-		source.loop = true;
-		source.start(0.0);
-		// startViz();
-	}
+	// function finishLoad() {
+	// 	source.buffer = audioBuffer;
+	// 	source.loop = true;
+	// 	source.start(0.0);
+	// 	// startViz();
+	// }
 
 	function update() 
 	{	
@@ -205,7 +267,7 @@ define(function (require)
 
 	return {
 		setup:setup,
-		init:init,
+		init3D:init3D,
 		initAudio:initAudio,
 		update:update
 	};

@@ -14,13 +14,7 @@ define(function (require)
 	var height = window.innerHeight;
 	var sc_client_id = '08b1532d93712c611b7a82da20ac52ca';
 	var controls;
-	var source;
-	var analyser;
-	var buffer;
-	var audioBuffer;
 	var dropArea;
-	var audioContext;
-	var source;
 	var processor;
 	var xhr;
 	var started = false;
@@ -290,7 +284,7 @@ define(function (require)
 		$.getJSON(url)
 		.done(function(data){		
 			$("#loading").html("");
-			rackcity.init(data, center_pt);
+			rackcity.init3D(data, center_pt);
 			animate();
 		})
 		.fail(function(error){
