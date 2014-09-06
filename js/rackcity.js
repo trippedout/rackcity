@@ -1,11 +1,15 @@
 define(function (require) 
 {
-	var proj4 = require('proj4');
+	var proj4 = require('proj4'),
+		audioController = require('audiocontroller');
 
 	var scene;
 
 	var all_features, small_roads, large_roads, buildings;
 	var center_xy;
+
+	var large_roads_lines, small_road_lines;
+	var building_dots;
 
 	function setup(sc)
 	{
@@ -31,22 +35,24 @@ define(function (require)
 		var sphere = new THREE.Mesh( geometry, material );
 		scene.add( sphere );
 
-		drawShit(small_roads, new THREE.LineBasicMaterial({
-	        color: 0xffffff
+		small_road_lines = drawShit(small_roads, new THREE.LineBasicMaterial({
+	        color: 0xccffcc
 	    }));
 
-	    drawShit(large_roads, new THREE.LineBasicMaterial({
-	        color: 0xffffff,
+	    large_roads_lines = drawShit(large_roads, new THREE.LineBasicMaterial({
+	        color: 0xffcccc,
 	        linewidth: 2
 	    }));
 
-	    drawBuildings(buildings, new THREE.LineBasicMaterial({
-	        color: 0x000033
+	    building_dots = drawBuildings(buildings, new THREE.LineBasicMaterial({
+	        color: 0x330033
 	    }));
 	}
 
 	function drawShit(container, material)
 	{
+		var allLines = [];
+
 		for(var i = 0; i < container.length; i++)
 		{
 			var geometry = new THREE.Geometry();
@@ -66,8 +72,11 @@ define(function (require)
 			}
 
 			var line = new THREE.Line(geometry, material);
+			allLines.push(line);
 			scene.add(line);
 		}
+
+		return allLines;
 	}
 
 	function drawBuildings(container, material)
@@ -81,6 +90,8 @@ define(function (require)
 		  // blending: THREE.AdditiveBlending,
 		  // transparent: true
 		});
+
+		var clouds = [];
 
 		for(var i = 0; i < container.length; i++)
 		{
@@ -99,7 +110,7 @@ define(function (require)
 			//iterate one per floor
 			for(var h = 0; h < height; h++)
 			{
-				if(h % 2)
+				if(h % 3)
 				{
 					for(var j = 0; j < pts.length; j++)
 					{
@@ -122,10 +133,12 @@ define(function (require)
 			drawBuildingOutline(pts, height);
 
 			var mesh = new THREE.PointCloud( geometry, material );
-
+			clouds.push(mesh);
 			// add it to the scene
 			scene.add(mesh);
 		}
+
+		return clouds;
 	}
 
 	function drawBuildingOutline(pts, height)
@@ -160,98 +173,129 @@ define(function (require)
 	function initAudio(url)
 	{	
 		console.log("RackCity::initAudio() " + url);
-
+		
 		window.AudioContext = window.AudioContext || window.webkitAudioContext;
 		var audioContext = new AudioContext();
 
-		var source;
-		var analyser;
-		var buffer;
-		var audioBuffer;
+		var source = audioContext.createBufferSource();
+		var analyser = audioContext.createAnalyser();
+		analyser.smoothingTimeConstant = 0.01;
+		analyser.fftSize = 2048;
 
-		source = audioContext.createBufferSource();
-		analyser = audioContext.createAnalyser();
-		analyser.smoothingTimeConstant = 0.3;
-		analyser.fftSize = 1024;
+		//testing
+		var container = document.createElement('div');
+		document.body.appendChild(container);
+		container.width  = 1024;
+        container.height = 256;
+        container.style.position = "absolute";
+        container.style.top = "100px";
+        container.style.left = "50px";
 
-		// Connect audio processing graph
-		source.connect(analyser);
-		analyser.connect(audioContext.destination);
+		var canvas = document.createElement('canvas');
+		container.appendChild(canvas);
+		canvas.width  = 1024;
+        canvas.height = 256;
+        
+        var ctx = canvas.getContext("2d");
+        ctx.strokeStyle="red";
 
-		// Load asynchronously
-		var request = new XMLHttpRequest();
-		request.open("GET", url, true);
-		request.responseType = "arraybuffer";
+        var bassBeat = false;
+        var bassMaxSize = 10;
+        var bassSize = 0;
 
-		
-		
-		// Create the audio graph.
-		var filter = audioContext.createBiquadFilter();
-		// Create and specify parameters for the low-pass filter.
-		filter.type = 0; // Low-pass filter. See BiquadFilterNode docs
-		filter.frequency.value = 110; // Set cutoff to 440 HZ
-		filter.gain.value = -20;
+        var trebBeat = false;
+        var trebMaxSize = 10;
+        var trebSize = 0;
 
-				source.connect(filter);
-				console.log(filter);
-				filter.connect(audioContext.destination);
-				
+        var midSize = 0;
 
-		var javascriptNode = audioContext.createScriptProcessor(4096, 1, 1);
-        // connect to destination, else it isn't called
-        // javascriptNode.connect(audioContext.destination);
-        javascriptNode.onaudioprocess = function() {
- 
-	        // get the average, bincount is fftsize / 2
-	        var array =  new Uint8Array(analyser.frequencyBinCount);
+		audioController.initAudio(url, audioContext, source, analyser, function() 
+		{
+			var array =  new Uint8Array(analyser.frequencyBinCount);
 	        analyser.getByteFrequencyData(array);
-	        var average = getAverageVolume(array)
-	 
-	        console.log(array);
+	        // var average = getAverageVolume(array)
+	 		
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-	        // // clear the current state
-	        // ctx.clearRect(0, 0, 60, 130);
-	 
-	        // // set the fill style
-	        // ctx.fillStyle=gradient;
-	 
-	        // // create the meters
-	        // ctx.fillRect(0,130-average,25,130);
-	    }
-	 
-	    function getAverageVolume(array) {
-	        var values = 0;
-	        var average;
-	 
-	        var length = array.length;
-	 
-	        // get all the frequency amplitudes
-	        for (var i = 0; i < length; i++) {
-	            values += array[i];
-	        }
-	 
-	        average = values / length;
-	        return average;
-	    }
+			//BASS
+			var avg = getAverageVolume(array.subarray(0,4))
 
+			if(!bassBeat && avg < 210) bassBeat = !bassBeat;			
+			if(bassBeat && avg >= 245)
+			{
+				bassBeat = !bassBeat;
+				bassSize = 12;
+				// console.log("new beat!");
+			}
+			if(bassSize > 0) bassSize -= .25;
 
-		request.onload = function() {
-			audioContext.decodeAudioData(request.response, function(buffer) {
-				source.buffer = buffer;
-				source.loop = true;
-				// filter.connect(analyser);
-				// analyser.connect(javascriptNode);
-				// analyser.connect(audioContext.destination);
-				source.start(0.0);
-				// finishLoad();
-			}, function(e) {
-				console.log("error" + e);
-			});
+			drawLines(bassSize, large_roads_lines);
+
+			//HIGH TREBLE
+			avg = getAverageVolume(array.subarray(-50))
+
+			if(!trebBeat && avg == 0) trebBeat = !trebBeat;			
+			if(trebBeat && avg >= 25)
+			{
+				trebBeat = !trebBeat;
+				trebSize = 5;
+				// console.log("new beat!");
+			}
+			if(trebSize > 0) trebSize -= .5;
+
+			drawLines(trebSize, small_road_lines);
 
 
-		};
-		request.send();
+			avg = getAverageVolume(array.subarray(100, -100));
+			console.log(avg);
+
+			for(var i = 0; i < building_dots.length; i++)
+			{
+				var cloud = building_dots[i];
+				cloud.material.size = map(avg, 0, 255, .5, 6);
+			}
+
+
+	 		// for(var i = 0; i < array.length; i++)
+	 		// {
+	 		// 	ctx.beginPath();
+		  //   	ctx.moveTo(i, 256);
+		  //   	ctx.lineTo(i, 256 - array[i]);
+		  //    	ctx.stroke();
+	 		// }
+
+	        // console.log(); //512
+		});
 	}
+
+	function map(value, start1, stop1, start2, stop2) 
+	{
+    	return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
+  	}
+
+	function drawLines(size, lines)
+	{
+		for(var i = 0; i < lines.length; i++)
+		{
+			var line = lines[i];
+			line.material.linewidth = size;
+		}
+	}
+
+	function getAverageVolume(array) {
+        var values = 0;
+        var average;
+ 
+        var length = array.length;
+ 
+        // get all the frequency amplitudes
+        for (var i = 0; i < length; i++) {
+            values += array[i];
+        }
+ 
+        average = values / length;
+        return average;
+    }
 
 	// function finishLoad() {
 	// 	source.buffer = audioBuffer;
@@ -272,3 +316,5 @@ define(function (require)
 		update:update
 	};
 });
+
+

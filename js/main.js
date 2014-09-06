@@ -1,6 +1,9 @@
 /**
  * lets get visual
 **/
+
+var TESTING = true;
+
 define(function (require) 
 {
 	var ram = require('ram'),
@@ -18,6 +21,7 @@ define(function (require)
 	var processor;
 	var xhr;
 	var started = false;
+	var frameCount = 0;
 
 	var postprocessing = { enabled  : true };
 
@@ -60,7 +64,8 @@ define(function (require)
 		document.body.appendChild(container);
 		camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000000);
 		camera.position.z = 1000;
-		camera.position.y = 500;
+		camera.position.x = 500;
+		camera.position.y = 350;
 		camera.lookAt(new THREE.Vector3(0,0,0));
 
 		scene = new THREE.Scene();
@@ -240,7 +245,9 @@ define(function (require)
 		{
 			event.preventDefault();
 
-			SC.get('/resolve', { url: $("#sc_url").val() }, function(track) {
+			SC.get('/resolve', { url: $("#sc_url").val() }, function(track) 
+			{
+				console.log(track);
 
 				if(!track.errors)			
 					rackcity.initAudio(track.stream_url + "?client_id=" + sc_client_id);
@@ -261,25 +268,32 @@ define(function (require)
 	{
 		$("#loading").html("Getting Location...");
 
-		if (navigator.geolocation) {
-	        navigator.geolocation.getCurrentPosition(getLocationSuccess, showError);
-	    } else {
-	        $("#info").html("Geolocation is not supported by this browser.");
-	    }
+		if(!TESTING)
+		{
+			if (navigator.geolocation) {
+		        navigator.geolocation.getCurrentPosition(getLocationSuccess, showError);
+		    } else {
+		        $("#info").html("Geolocation is not supported by this browser.");
+		    }
+		}
+		else
+		{
+			getLocationSuccess({coords:{latitude:"40.714352999999996", longitude:"-74.005973"}});
+		}
 	}
 
 	function getLocationSuccess(position) 
 	{
 		$("#loading").html("Loading Location Data...");
 
-	    $("#info").html("Latitude: " + position.coords.latitude + 
-	    "<br>Longitude: " + position.coords.longitude); 
+	    $("#info").html("Latitude: " + position.coords.latitude + "<br>Longitude: " + position.coords.longitude); 
 
 	    var url = "proxy/getLocation.php?lat=" + position.coords.latitude + "&lon=" + position.coords.longitude;
 		var center_pt = [position.coords.longitude, position.coords.latitude];
 
 		//testing
-		//url = 'data/nyc.js';
+		if(TESTING)
+			url = 'data/nyc.json';
 
 		$.getJSON(url)
 		.done(function(data){		
@@ -320,6 +334,10 @@ define(function (require)
 	function render() 
 	{
 		rackcity.update();
+
+		frameCount += .002;
+		camera.position.x = Math.sin(frameCount) * 675;
+		camera.position.z = Math.cos(frameCount) * 1000;
 
 		if ( postprocessing.enabled ) {
 			renderer.clear();
