@@ -213,8 +213,9 @@ define(function (require)
 		{
 			var array =  new Uint8Array(analyser.frequencyBinCount);
 	        analyser.getByteFrequencyData(array);
-	        // var average = getAverageVolume(array)
-	 		
+	 		// console.log(array);
+			
+
 			ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 			//BASS
@@ -247,7 +248,7 @@ define(function (require)
 
 
 			avg = getAverageVolume(array.subarray(100, -100));
-			console.log(avg);
+			//console.log(avg);
 
 			for(var i = 0; i < building_dots.length; i++)
 			{
