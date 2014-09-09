@@ -109,7 +109,7 @@ define(function (require)
 	function initParams() {
 		var effectController  = {
 
-			enabled: true,
+			enabled: false,
 			jsDepthCalculation: true,
 			shaderFocus: false,
 
@@ -180,6 +180,8 @@ define(function (require)
 
 		gui.add( shaderSettings, "rings", 1, 8).step(1).onChange( shaderUpdate );
 		gui.add( shaderSettings, "samples", 1, 13).step(1).onChange( shaderUpdate );
+
+		gui.close();
 
 		matChanger();
 	}

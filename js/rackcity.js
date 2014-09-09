@@ -38,7 +38,7 @@ define(function (require)
 
 	    large_roads_lines = drawShit(large_roads, new THREE.LineBasicMaterial({
 	        color: 0xffffffff,
-	        linewidth: 2
+	        linewidth: 1
 	    }));
 
 	    building_dots = drawBuildings(buildings, new THREE.LineBasicMaterial({
@@ -49,7 +49,7 @@ define(function (require)
 	function initHomeLine()
 	{		
 		var vertexShader = 
-			'uniform float[512] spectrum;\n' +
+			//'uniform float[512] spectrum;\n' +
 		    'void main() {\n' +
 		    '    vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );\n' +
 		    '    gl_Position = projectionMatrix * mvPosition;\n' +
@@ -58,7 +58,7 @@ define(function (require)
 		var fragmentShader = 
 		    'varying float vAlpha;\n' +
 		    'void main() {\n' +
-		    '    gl_FragColor = vec4( 1.0, 0.0, 0.0, 0.5 );\n' +
+		    '    gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 );\n' +
 		    '}';
 
 		var uniforms = {
@@ -66,16 +66,16 @@ define(function (require)
 		} ;
 
 	    var material = new THREE.ShaderMaterial({
-	        uniforms:       uniforms,
+	        //uniforms:       uniforms,
 	        vertexShader:   vertexShader,
-	        fragmentShader: fragmentShader,
-	        transparent:    true
+	        fragmentShader: fragmentShader//,
+	        // transparent:    true
 	    });
 
 		//place line up from center
 		var line_geom = new THREE.Geometry();
 		var bottom = new THREE.Vector3(0, 0, 0);
-		var top = new THREE.Vector3(0, 1000, 0);
+		var top = new THREE.Vector3(0, 500, 0);
 		line_geom.vertices.push(bottom);
 		line_geom.vertices.push(top);
 		var line = new THREE.Line(line_geom, material);
@@ -84,6 +84,36 @@ define(function (require)
 
 	function drawShit(container, material)
 	{
+		var vertexShader = 
+			//'uniform float[512] spectrum;\n' +	
+			'varying float vPercent;\n' +		
+			'varying float vDist;\n' +
+		    'void main() {\n' +
+		    '   vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );\n' +
+		    '   vDist = distance(vec2(0,0), position.xz);\n' +
+		    '   vPercent = 1.0;\n' +
+		    '   gl_Position = projectionMatrix * mvPosition;\n' +
+		    '}';
+
+		var fragmentShader = 
+		    'varying float vPercent;\n' +
+			'varying float vDist;\n' +
+		    'void main() {\n' +
+		    '    float a = 1.0;\n' +
+		    '    if(vDist > 850.0 )\n' +
+		    '		a = 0.0;\n' +
+		    '	 else if(vDist > 500.0)\n' +
+		    '    	a = (850.0 - vDist) / 500.0;\n' + 
+		    '    gl_FragColor = vec4( 1.0, 1.0, 1.0, a );//1.0 );\n' +
+		    '}';
+
+	    var material2 = new THREE.ShaderMaterial({
+	        //uniforms:       uniforms,
+	        vertexShader:   vertexShader,
+	        fragmentShader: fragmentShader,
+	        transparent:    true
+	    });
+
 		var allLines = [];
 
 		for(var i = 0; i < container.length; i++)
@@ -103,7 +133,7 @@ define(function (require)
 			    geometry.vertices.push(vec3);
 			}
 
-			var line = new THREE.Line(geometry, material);
+			var line = new THREE.Line(geometry, material2);
 			allLines.push(line);
 			scene.add(line);
 		}
@@ -117,7 +147,7 @@ define(function (require)
 			'uniform float volume;\n' +
 		    'void main() {\n' +
 		    '    vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );\n' +
-		    '    gl_PointSize = volume / 20.0;\n' +
+		    '    gl_PointSize = 2.5;// volume / 20.0;\n' +
 		    '    vec4 pos = projectionMatrix * mvPosition;\n' +
 		    '    gl_Position = vec4(pos.x, pos.y + volume, pos.z, pos.w);\n' +
 		    '}';
@@ -126,7 +156,7 @@ define(function (require)
 			'uniform vec3 color;\n' +
 		    'varying float vAlpha;\n' +
 		    'void main() {\n' +
-		    '    gl_FragColor = vec4( color, 0.5 );\n' +
+		    '    gl_FragColor = vec4( color, 0.25 );\n' +
 		    '}';
 
 	    // uniforms
@@ -144,6 +174,7 @@ define(function (require)
 
 
 		var clouds = [];
+		var count = 0;
 
 		for(var i = 0; i < container.length; i++)
 		{
@@ -162,7 +193,7 @@ define(function (require)
 			//iterate one per floor
 			for(var h = 0; h < height; h++)
 			{
-				if(h % 3 == 0 && h != height - 1)
+				if(h % 4 == 0 && h != height - 1)
 				{
 					for(var j = 0; j < pts.length; j++)
 					{
@@ -176,6 +207,8 @@ define(function (require)
 				    	);					
 
 					    geometry.vertices.push(vec3);
+
+						count++;
 					}
 				}
 
@@ -197,6 +230,8 @@ define(function (require)
 			// add it to the scene
 			scene.add(mesh);
 		}
+
+		console.log("num of top pots: " + count);
 
 		return clouds;
 	}
