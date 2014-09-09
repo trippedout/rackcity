@@ -16,6 +16,7 @@ define(function (require)
 	var width = window.innerWidth;
 	var height = window.innerHeight;
 	var sc_client_id = '08b1532d93712c611b7a82da20ac52ca';
+	var camXDist = 1000, camYDist = 1350;
 	var controls;
 	var dropArea;
 	var processor;
@@ -337,8 +338,8 @@ define(function (require)
 		rackcity.update();
 
 		frameCount += .0025;
-		camera.position.x = Math.sin(frameCount) * 725;
-		camera.position.z = Math.cos(frameCount) * 1200;
+		camera.position.x = Math.sin(frameCount) * camXDist;
+		camera.position.z = Math.cos(frameCount) * camYDist;
 		camera.lookAt(new THREE.Vector3(0,0,0));
 
 		if ( postprocessing.enabled ) {

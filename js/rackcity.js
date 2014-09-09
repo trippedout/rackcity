@@ -48,16 +48,37 @@ define(function (require)
 
 	function initHomeLine()
 	{		
+		var vertexShader = 
+			'uniform float[512] spectrum;\n' +
+		    'void main() {\n' +
+		    '    vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );\n' +
+		    '    gl_Position = projectionMatrix * mvPosition;\n' +
+		    '}';
+
+		var fragmentShader = 
+		    'varying float vAlpha;\n' +
+		    'void main() {\n' +
+		    '    gl_FragColor = vec4( 1.0, 0.0, 0.0, 0.5 );\n' +
+		    '}';
+
+		var uniforms = {
+			spectrum: { type: 'f', values:[] }
+		} ;
+
+	    var material = new THREE.ShaderMaterial({
+	        uniforms:       uniforms,
+	        vertexShader:   vertexShader,
+	        fragmentShader: fragmentShader,
+	        transparent:    true
+	    });
+
 		//place line up from center
 		var line_geom = new THREE.Geometry();
 		var bottom = new THREE.Vector3(0, 0, 0);
 		var top = new THREE.Vector3(0, 1000, 0);
 		line_geom.vertices.push(bottom);
 		line_geom.vertices.push(top);
-		var line = new THREE.Line(line_geom, new THREE.LineBasicMaterial({
-	        color: 0xffffff,
-	        linewidth: 3
-	    }));
+		var line = new THREE.Line(line_geom, material);
 	    scene.add(line);
 	}
 
@@ -90,28 +111,23 @@ define(function (require)
 		return allLines;
 	}
 
-	var particleShaderVertex = 
-		'uniform float volume;\n' +
-	    'void main() {\n' +
-	    '    vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );\n' +
-	    '    gl_PointSize = volume / 40.0;\n' +
-	    '    vec4 pos = projectionMatrix * mvPosition;\n' +
-	    '    gl_Position = vec4(pos.x, pos.y + volume, pos.z, pos.w);\n' +
-	    '}';
-
-	var particleShaderFragment = 
-		'uniform vec3 color;\n' +
-	    'varying float vAlpha;\n' +
-	    'void main() {\n' +
-	    '    gl_FragColor = vec4( color, 0.5 );\n' +
-	    '}';
-
 	function drawBuildings(container, material)
 	{
-		// var material = new THREE.PointCloudMaterial({
-		//   color: 0xEE5E5FF,
-		//   size: 1.5
-		// });
+		var particleShaderVertex = 
+			'uniform float volume;\n' +
+		    'void main() {\n' +
+		    '    vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );\n' +
+		    '    gl_PointSize = volume / 20.0;\n' +
+		    '    vec4 pos = projectionMatrix * mvPosition;\n' +
+		    '    gl_Position = vec4(pos.x, pos.y + volume, pos.z, pos.w);\n' +
+		    '}';
+
+		var particleShaderFragment = 
+			'uniform vec3 color;\n' +
+		    'varying float vAlpha;\n' +
+		    'void main() {\n' +
+		    '    gl_FragColor = vec4( color, 0.5 );\n' +
+		    '}';
 
 	    // uniforms
 	    var uniforms = {
@@ -169,20 +185,6 @@ define(function (require)
 					for(var j = 0; j < pts.length; j++)
 					{
 						var latlng = [pts[j].lon, pts[j].lat];
-						// var pt_xy = proj4('EPSG:4326', 'EPSG:3785', latlng);  
-
-						// var vec3 = new THREE.Vector3(
-				  //   		pt_xy[0] - center_xy[0], 
-				  //   		h * 5,
-				  //   		pt_xy[1] - center_xy[1]	
-				  //   	);					
-
-					 //    geometry.vertices.push(vec3);
-
-					 //    var geometry = new THREE.SphereGeometry( 3, 8, 8 );
-						// var material = new THREE.MeshBasicMaterial( {color: 0xffffff} );
-						// var sphere = new THREE.Mesh( geometry, material );
-						// scene.add( sphere );
 					}
 				}
 			}
@@ -238,25 +240,8 @@ define(function (require)
 
 		var source = audioContext.createBufferSource();
 		var analyser = audioContext.createAnalyser();
-		analyser.smoothingTimeConstant = 0.01;
-		analyser.fftSize = 2048;
-
-		// //testing
-		// var container = document.createElement('div');
-		// document.body.appendChild(container);
-		// container.width  = 1024;
-  //       container.height = 256;
-  //       container.style.position = "absolute";
-  //       container.style.top = "100px";
-  //       container.style.left = "50px";
-
-		// var canvas = document.createElement('canvas');
-		// container.appendChild(canvas);
-		// canvas.width  = 1024;
-  //       canvas.height = 256;
-        
-  //       var ctx = canvas.getContext("2d");
-  //       ctx.strokeStyle="red";
+		analyser.smoothingTimeConstant = 0.05;
+		analyser.fftSize = 1024;
 
         var bassBeat = false;
         var bassMaxSize = 10;
@@ -276,7 +261,7 @@ define(function (require)
 			
 
 			//BASS
-			var avg = getAverageVolume(array.subarray(0,4))
+			var avg = getAverageVolume(array.subarray(0,3))
 
 			if(!bassBeat && avg < 210) bassBeat = !bassBeat;			
 			if(bassBeat && avg >= 245)
@@ -304,7 +289,7 @@ define(function (require)
 			drawLines(trebSize, small_road_lines);
 
 
-			avg = getAverageVolume(array.subarray(100, -100));
+			avg = getAverageVolume(array.subarray(50, -50));
 			// console.log(avg);
 
 			for(var i = 0; i < building_dots.length; i++)
