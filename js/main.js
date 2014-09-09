@@ -80,9 +80,10 @@ define(function (require)
 		initPostprocessing();
 
 		renderer.autoClear = false;
+		renderer.setClearColor(0x141a26, 1);
 		container.appendChild(renderer.domElement);
 
-		controls = new THREE.TrackballControls( camera, renderer.domElement );
+		// controls = new THREE.TrackballControls( camera, renderer.domElement );
 		// stop the user getting a text cursor
 		document.onselectStart = function() {
 			return false;
@@ -326,7 +327,7 @@ define(function (require)
 
 	function animate() {
 		requestAnimationFrame(animate);
-		controls.update();
+		//controls.update();
 		render();
 		stats.update();
 	}
@@ -338,6 +339,7 @@ define(function (require)
 		frameCount += .002;
 		camera.position.x = Math.sin(frameCount) * 675;
 		camera.position.z = Math.cos(frameCount) * 1000;
+		camera.lookAt(new THREE.Vector3(0,0,0));
 
 		if ( postprocessing.enabled ) {
 			renderer.clear();

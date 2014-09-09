@@ -36,16 +36,16 @@ define(function (require)
 		scene.add( sphere );
 
 		small_road_lines = drawShit(small_roads, new THREE.LineBasicMaterial({
-	        color: 0xccffcc
+	        color: 0xffffff
 	    }));
 
 	    large_roads_lines = drawShit(large_roads, new THREE.LineBasicMaterial({
-	        color: 0xffcccc,
+	        color: 0xffffffff,
 	        linewidth: 2
 	    }));
 
 	    building_dots = drawBuildings(buildings, new THREE.LineBasicMaterial({
-	        color: 0x330033
+	        color: 0xffffff
 	    }));
 	}
 
@@ -82,8 +82,8 @@ define(function (require)
 	function drawBuildings(container, material)
 	{
 		var material = new THREE.PointCloudMaterial({
-		  color: 0xFFFFFF,
-		  size: 2
+		  color: 0xEE5E5FF,
+		  size: 1.5
 		  // map: THREE.ImageUtils.loadTexture(
 		  //   "images/particle.png"
 		  // ),
@@ -110,7 +110,7 @@ define(function (require)
 			//iterate one per floor
 			for(var h = 0; h < height; h++)
 			{
-				if(h % 3)
+				if(h % 3 == 0 && h != height - 1)
 				{
 					for(var j = 0; j < pts.length; j++)
 					{
@@ -126,10 +126,31 @@ define(function (require)
 					    geometry.vertices.push(vec3);
 					}
 				}
+
+				if(h == height - 1)
+				{
+					for(var j = 0; j < pts.length; j++)
+					{
+						var latlng = [pts[j].lon, pts[j].lat];
+						// var pt_xy = proj4('EPSG:4326', 'EPSG:3785', latlng);  
+
+						// var vec3 = new THREE.Vector3(
+				  //   		pt_xy[0] - center_xy[0], 
+				  //   		h * 5,
+				  //   		pt_xy[1] - center_xy[1]	
+				  //   	);					
+
+					 //    geometry.vertices.push(vec3);
+
+					    var geometry = new THREE.SphereGeometry( 5, 32, 32 );
+						var material = new THREE.MeshBasicMaterial( {color: 0xff0000} );
+						var sphere = new THREE.Mesh( geometry, material );
+						scene.add( sphere );
+					}
+				}
 			}
 
 			//draw top and bottom
-			// drawBuildingOutline(pts);
 			drawBuildingOutline(pts, height);
 
 			var mesh = new THREE.PointCloud( geometry, material );
@@ -160,8 +181,9 @@ define(function (require)
 		}
 
 		var line = new THREE.Line(geometry, new THREE.LineBasicMaterial({
-	        color: 0xff0000
+	        color: 0x474d59
 	    }));
+
 		scene.add(line);
 	}
 
