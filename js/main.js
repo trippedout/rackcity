@@ -57,15 +57,15 @@ define(function (require)
 		getLocation();
 	});
 
-	function init() {
-
+	function init() 
+	{
 		//init 3D scene
 		container = document.createElement('div');
 		document.body.appendChild(container);
 		camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000000);
-		camera.position.z = 1000;
-		camera.position.x = 500;
-		camera.position.y = 350;
+		camera.position.z = 1200;
+		camera.position.x = 650;
+		camera.position.y = 325;
 		camera.lookAt(new THREE.Vector3(0,0,0));
 
 		scene = new THREE.Scene();
@@ -83,7 +83,7 @@ define(function (require)
 		renderer.setClearColor(0x141a26, 1);
 		container.appendChild(renderer.domElement);
 
-		// controls = new THREE.TrackballControls( camera, renderer.domElement );
+		controls = new THREE.TrackballControls( camera, renderer.domElement );
 		// stop the user getting a text cursor
 		document.onselectStart = function() {
 			return false;
@@ -327,7 +327,7 @@ define(function (require)
 
 	function animate() {
 		requestAnimationFrame(animate);
-		//controls.update();
+		controls.update();
 		render();
 		stats.update();
 	}
@@ -336,9 +336,9 @@ define(function (require)
 	{
 		rackcity.update();
 
-		frameCount += .002;
-		camera.position.x = Math.sin(frameCount) * 675;
-		camera.position.z = Math.cos(frameCount) * 1000;
+		frameCount += .0025;
+		camera.position.x = Math.sin(frameCount) * 725;
+		camera.position.z = Math.cos(frameCount) * 1200;
 		camera.lookAt(new THREE.Vector3(0,0,0));
 
 		if ( postprocessing.enabled ) {

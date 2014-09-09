@@ -29,12 +29,9 @@ define(function (require)
 		//get center pt xy projection for normalizing other points
 		center_xy = proj4('EPSG:4326', 'EPSG:3785', center_pt);
 
-		//place sphere at center 
-		var geometry = new THREE.SphereGeometry( 5, 32, 32 );
-		var material = new THREE.MeshBasicMaterial( {color: 0xff0000} );
-		var sphere = new THREE.Mesh( geometry, material );
-		scene.add( sphere );
+		initHomeLine();
 
+	    //build roads and buildings
 		small_road_lines = drawShit(small_roads, new THREE.LineBasicMaterial({
 	        color: 0xffffff
 	    }));
@@ -47,6 +44,21 @@ define(function (require)
 	    building_dots = drawBuildings(buildings, new THREE.LineBasicMaterial({
 	        color: 0xffffff
 	    }));
+	}
+
+	function initHomeLine()
+	{		
+		//place line up from center
+		var line_geom = new THREE.Geometry();
+		var bottom = new THREE.Vector3(0, 0, 0);
+		var top = new THREE.Vector3(0, 1000, 0);
+		line_geom.vertices.push(bottom);
+		line_geom.vertices.push(top);
+		var line = new THREE.Line(line_geom, new THREE.LineBasicMaterial({
+	        color: 0xffffff,
+	        linewidth: 3
+	    }));
+	    scene.add(line);
 	}
 
 	function drawShit(container, material)
@@ -66,7 +78,6 @@ define(function (require)
 		    		pt_xy[0] - center_xy[0], 
 		    		0,
 		    		pt_xy[1] - center_xy[1]
-		    		
 		    	);
 			    geometry.vertices.push(vec3);
 			}
@@ -79,17 +90,42 @@ define(function (require)
 		return allLines;
 	}
 
+	var particleShaderVertex = 
+		'uniform float volume;\n' +
+	    'void main() {\n' +
+	    '    vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );\n' +
+	    '    gl_PointSize = volume / 40.0;\n' +
+	    '    vec4 pos = projectionMatrix * mvPosition;\n' +
+	    '    gl_Position = vec4(pos.x, pos.y + volume, pos.z, pos.w);\n' +
+	    '}';
+
+	var particleShaderFragment = 
+		'uniform vec3 color;\n' +
+	    'varying float vAlpha;\n' +
+	    'void main() {\n' +
+	    '    gl_FragColor = vec4( color, 0.5 );\n' +
+	    '}';
+
 	function drawBuildings(container, material)
 	{
-		var material = new THREE.PointCloudMaterial({
-		  color: 0xEE5E5FF,
-		  size: 1.5
-		  // map: THREE.ImageUtils.loadTexture(
-		  //   "images/particle.png"
-		  // ),
-		  // blending: THREE.AdditiveBlending,
-		  // transparent: true
-		});
+		// var material = new THREE.PointCloudMaterial({
+		//   color: 0xEE5E5FF,
+		//   size: 1.5
+		// });
+
+	    // uniforms
+	    var uniforms = {
+	        color: { type: "c", value: new THREE.Color( 0xffffff ) },
+	        volume: { type: "f", value: 0 }
+	    };
+
+		var material = new THREE.ShaderMaterial({
+	        uniforms:       uniforms,
+	        vertexShader:   particleShaderVertex,
+	        fragmentShader: particleShaderFragment,
+	        transparent:    true
+	    });
+
 
 		var clouds = [];
 
@@ -127,6 +163,7 @@ define(function (require)
 					}
 				}
 
+				//do something when its top
 				if(h == height - 1)
 				{
 					for(var j = 0; j < pts.length; j++)
@@ -142,10 +179,10 @@ define(function (require)
 
 					 //    geometry.vertices.push(vec3);
 
-					    var geometry = new THREE.SphereGeometry( 5, 32, 32 );
-						var material = new THREE.MeshBasicMaterial( {color: 0xff0000} );
-						var sphere = new THREE.Mesh( geometry, material );
-						scene.add( sphere );
+					 //    var geometry = new THREE.SphereGeometry( 3, 8, 8 );
+						// var material = new THREE.MeshBasicMaterial( {color: 0xffffff} );
+						// var sphere = new THREE.Mesh( geometry, material );
+						// scene.add( sphere );
 					}
 				}
 			}
@@ -173,7 +210,7 @@ define(function (require)
 
 			var vec3 = new THREE.Vector3(
 	    		pt_xy[0] - center_xy[0], 
-	    		height === undefined ? 0 : height * 5,
+	    		0, //height === undefined ? 0 : height * 5,
 	    		pt_xy[1] - center_xy[1]	
 	    	);					
 
@@ -204,22 +241,22 @@ define(function (require)
 		analyser.smoothingTimeConstant = 0.01;
 		analyser.fftSize = 2048;
 
-		//testing
-		var container = document.createElement('div');
-		document.body.appendChild(container);
-		container.width  = 1024;
-        container.height = 256;
-        container.style.position = "absolute";
-        container.style.top = "100px";
-        container.style.left = "50px";
+		// //testing
+		// var container = document.createElement('div');
+		// document.body.appendChild(container);
+		// container.width  = 1024;
+  //       container.height = 256;
+  //       container.style.position = "absolute";
+  //       container.style.top = "100px";
+  //       container.style.left = "50px";
 
-		var canvas = document.createElement('canvas');
-		container.appendChild(canvas);
-		canvas.width  = 1024;
-        canvas.height = 256;
+		// var canvas = document.createElement('canvas');
+		// container.appendChild(canvas);
+		// canvas.width  = 1024;
+  //       canvas.height = 256;
         
-        var ctx = canvas.getContext("2d");
-        ctx.strokeStyle="red";
+  //       var ctx = canvas.getContext("2d");
+  //       ctx.strokeStyle="red";
 
         var bassBeat = false;
         var bassMaxSize = 10;
@@ -237,8 +274,6 @@ define(function (require)
 	        analyser.getByteFrequencyData(array);
 	 		// console.log(array);
 			
-
-			ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 			//BASS
 			var avg = getAverageVolume(array.subarray(0,4))
@@ -270,15 +305,15 @@ define(function (require)
 
 
 			avg = getAverageVolume(array.subarray(100, -100));
-			//console.log(avg);
+			// console.log(avg);
 
 			for(var i = 0; i < building_dots.length; i++)
 			{
 				var cloud = building_dots[i];
-				cloud.material.size = map(avg, 0, 255, .5, 6);
+				cloud.material.uniforms.volume.value = map(avg, 0, 255, 0, 100);
 			}
 
-
+			// ctx.clearRect(0, 0, canvas.width, canvas.height);
 	 		// for(var i = 0; i < array.length; i++)
 	 		// {
 	 		// 	ctx.beginPath();
