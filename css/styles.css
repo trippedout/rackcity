@@ -15,7 +15,64 @@ h1 {
 	position: absolute;
 	top: 40px;
 	width: 100%;
+	margin: 0;
+	padding: 0;
 	letter-spacing: .5em;
+}
+
+span {
+	letter-spacing: .2em;
+}
+
+.light { 
+	font-weight: 200;
+}
+
+#soundcloud {
+	position: absolute;
+	top: 45%;
+	width: 100%;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#soundcloud form {
+	display:inline-block;
+}
+
+#soundcloud .title {
+	letter-spacing: .5em;
+	margin-bottom: 0px;
+	font-weight: 200;
+}
+
+input[type=text] {
+    font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif;
+	font-size: 10pt;
+	font-weight: 200;
+	letter-spacing: .1em;  
+    border: 1px solid #d5d5d5;
+    width: 450px;
+    padding: 8px 12px; 
+    margin-bottom: 20px;
+    background: #191e26;
+    color: #ffffff;
+    text-align: center;
+}
+
+input[type=submit] {
+    font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif;
+    border: hidden;
+    width: 200px;
+    padding: 5px 10px; 
+    background:transparent;
+    color: #ffffff;
+    text-align: center;
+	cursor: pointer;
+	letter-spacing: .3em;   
+	font-size: 9.5pt;
+	font-weight: 200;
 }
 
 #info {	
@@ -24,8 +81,7 @@ h1 {
 	bottom: 20px;
 	width: 100%;
 	padding: 5px;
-	z-index: 100;
-	
+	z-index: 100;	
 	font-size: 12px;
 	line-height:20px;
 }
@@ -40,18 +96,22 @@ h1 {
 	line-height: 24px;
 }
 
-.light { 
-	font-weight: 200;
+#songinfo {
+	text-align: left;
+	position: absolute;
+	top: 40px;
+	left: 40px;
+	font-size: 12pt;
+	letter-spacing: .2em;
+	line-height: 24px;
 }
+
 
 #loading {
 	font-size: 26px;
 	position: absolute;
 	top: 50%;
 	width: 100%;
-	margin:-20px;
-	
-
 }
 
 #debugCtx{
@@ -60,10 +120,6 @@ h1 {
 	left: 100px;
 	xwidth: 800px;
 	xheight: 600px;
-}
-
-#sc_form {
-	position: absolute;
 }
 
 a {

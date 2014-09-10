@@ -2,7 +2,8 @@
  * lets get visual
 **/
 
-var TESTING = true;
+var TESTING = false;
+var USE_STATS = false;
 
 define(function (require) 
 {
@@ -93,10 +94,13 @@ define(function (require)
 		};
 
 		//add stats
-		stats = new Stats();
-		stats.domElement.style.position = 'absolute';
-		stats.domElement.style.top = '0px';
-		container.appendChild(stats.domElement);
+		if(USE_STATS)
+		{
+			stats = new Stats();
+			stats.domElement.style.position = 'absolute';
+			stats.domElement.style.top = '0px';
+			container.appendChild(stats.domElement);
+		}
 
 		rackcity.setup(scene);
 
@@ -290,10 +294,10 @@ define(function (require)
 
 	function getLocationSuccess(position) 
 	{
-		$("#loading").html("Loading Location Data...");
-
 	    $("#lat").html(position.coords.latitude);
 	    $("#lng").html(position.coords.longitude); 
+
+		$("#loading").html("Loading Location Data...");
 
 	    var url = "proxy/getLocation.php?lat=" + position.coords.latitude + "&lon=" + position.coords.longitude;
 		var center_pt = [position.coords.longitude, position.coords.latitude];
@@ -335,7 +339,8 @@ define(function (require)
 		requestAnimationFrame(animate);
 		controls.update();
 		render();
-		stats.update();
+		
+		if(USE_STATS) stats.update();
 	}
 
 	function render() 
@@ -363,10 +368,10 @@ define(function (require)
 
 		// } else {
 
-			scene.overrideMaterial = null;
+		scene.overrideMaterial = null;
 
-			renderer.clear();
-			renderer.render( scene, camera );
+		renderer.clear();
+		renderer.render( scene, camera );
 
 		// }
 	}
