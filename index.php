@@ -26,7 +26,7 @@ $testLocal = FALSE;
 <div id="songinfo" style="display:none;">
 	<span id="artist">FANCY</span> / <span id="songname" class="light">IGGY AZALEA</span>
 	<br/>
-	<span id="timestamp" class="light">02 : 32 : 02</span>
+	<span id="timestamp" class="light">0 : 30 : 00</span>
 </div>
 <?php 
 if(!$testLocal)

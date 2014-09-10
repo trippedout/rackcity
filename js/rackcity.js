@@ -355,6 +355,10 @@ define(function (require)
 		var audioContext = new AudioContext();
 
 		var source = audioContext.createBufferSource();
+		source.onended = function() {
+			console.log("song over");
+		}
+		
 		var analyser = audioContext.createAnalyser();
 		analyser.smoothingTimeConstant = .85;
 		analyser.fftSize = 1024;
@@ -484,8 +488,16 @@ define(function (require)
 
 	function update() 
 	{	
-		//update song time
 
+	}
+
+	function formatTime(seconds) 
+	{
+		minutes = Math.floor(seconds / 60);
+		minutes = (minutes >= 10) ? minutes : "0" + minutes;
+		seconds = Math.floor(seconds % 60);
+		seconds = (seconds >= 10) ? seconds : "0" + seconds;
+		return minutes + ":" + seconds;
 	}
 
 	return {
