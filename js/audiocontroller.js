@@ -4,37 +4,29 @@ define(function (require)
 
 	function initAudio(url, audioContext, source, analyser, audioProcessCallback)
 	{
-
 		var buffer;
 		var audioBuffer;
 
-		// Connect audio processing graph
-		// source.connect(analyser);
-		// analyser.connect(audioContext.destination);
-
-		// Load asynchronously
+		// Load 
 		var request = new XMLHttpRequest();
 		request.open("GET", url, true);
 		request.responseType = "arraybuffer";
 
-		
-		
-		// Create the audio graph.
+
+		// filter for testing low freq's alone
 		var filter = audioContext.createBiquadFilter();
-		// Create and specify parameters for the low-pass filter.
-		filter.type = "lowpass"; // Low-pass filter. See BiquadFilterNode docs
-		filter.frequency.value = 50; // Set cutoff to 440 HZ
+		filter.type = "lowpass"; 
+		filter.frequency.value = 50;
 		// filter.gain.value = -20;
 
-			
 
 		javascriptNode = audioContext.createScriptProcessor(512, 1, 1);        
         javascriptNode.onaudioprocess = audioProcessCallback;
 	 	
-	 	// filter.connect(javascriptNode);
+
+	 	// fake gain for script processor bug workaround
 		var gainNode = audioContext.createGain();
-		// gainNode.gain.value = 0;
-			
+		// gainNode.gain.value = 0;			
 
 		request.onload = function() {
 			audioContext.decodeAudioData(request.response, function(buffer) {
@@ -46,16 +38,9 @@ define(function (require)
 				analyser.connect(gainNode);
 				gainNode.connect(audioContext.destination);
 				javascriptNode.connect(gainNode);
-				// gainNode.connect(javascriptNode);
-				
-				// console.log(filter);
-				// filter.connect(analyser);
-				
-				// // javascriptNode.connect(audioContext.destination);
-				// analyser.connect(audioContext.destination);
 
 				source.start(0.0);
-				// finishLoad();
+
 			}, function(e) {
 				console.log("error" + e);
 			});

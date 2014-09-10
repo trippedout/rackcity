@@ -71,7 +71,7 @@ define(function (require)
 	        transparent:    true
 	    });
 
-	    material.linewidth = 4;
+	    material.linewidth = 2;
 
 		//place line up from center
 		var line_geom = new THREE.Geometry();

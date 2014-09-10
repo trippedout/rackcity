@@ -346,32 +346,28 @@ define(function (require)
 		camera.position.z = Math.cos(frameCount) * camYDist;
 		camera.lookAt(new THREE.Vector3(0,0,0));
 
-		if ( postprocessing.enabled ) {
-			renderer.clear();
+		// if ( postprocessing.enabled ) {
+		// 	renderer.clear();
 
-			// Render scene into texture
+		// 	// Render scene into texture
+		// 	scene.overrideMaterial = null;
+		// 	renderer.render( scene, camera, postprocessing.rtTextureColor, true );
 
-			scene.overrideMaterial = null;
-			renderer.render( scene, camera, postprocessing.rtTextureColor, true );
+		// 	// Render depth into texture
+		// 	scene.overrideMaterial = material_depth;
+		// 	renderer.render( scene, camera, postprocessing.rtTextureDepth, true );
 
-			// Render depth into texture
+		// 	// Render bokeh composite
+		// 	renderer.render( postprocessing.scene, postprocessing.camera );
 
-			scene.overrideMaterial = material_depth;
-			renderer.render( scene, camera, postprocessing.rtTextureDepth, true );
-
-			// Render bokeh composite
-
-			renderer.render( postprocessing.scene, postprocessing.camera );
-
-
-		} else {
+		// } else {
 
 			scene.overrideMaterial = null;
 
 			renderer.clear();
 			renderer.render( scene, camera );
 
-		}
+		// }
 	}
 
 	/**
