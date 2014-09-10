@@ -90,7 +90,7 @@ define(function (require)
 	function drawRoads(container)
 	{
 		var vertexShader = 
-			//'uniform float[512] spectrum;\n' +	
+			'uniform float burst;\n' +
 			'varying float vPercent;\n' +		
 			'varying float vDist;\n' +
 		    'void main() {\n' +
@@ -101,6 +101,7 @@ define(function (require)
 		    '}';
 
 		var fragmentShader = 
+			'uniform float burst;\n' +
 		    'varying float vPercent;\n' +
 			'varying float vDist;\n' +
 		    'void main() {\n' +
@@ -112,8 +113,12 @@ define(function (require)
 		    '    gl_FragColor = vec4( 1.0, 1.0, 1.0, a );//1.0 );\n' +
 		    '}';
 
+		var uniforms = {
+			burst: { type:'f', value: 0.0 }
+		};
+
 	    var material = new THREE.ShaderMaterial({
-	        //uniforms:       uniforms,
+	        uniforms:       uniforms,
 	        vertexShader:   vertexShader,
 	        fragmentShader: fragmentShader,
 	        transparent:    true
@@ -299,77 +304,6 @@ define(function (require)
 
 			return group;
 		}
-
-		//create meshes and buildings for chunks of height
-
-		// for(var i = 0; i < container.length; i++)
-		// {
-		// 	var geometry = new THREE.Geometry();
-			
-		// 	// find height or elevation
-		// 	var height = Math.round(container[i]['height']);
-		// 	if(height == null)
-		// 		height = Math.round(container[i]['ele']);
-		// 	if(height == null || height == NaN || height == undefined)
-		// 		height = 5;
-
-		// 	//figure out how many points in a floor
-		// 	var pts = container[i]['pts'];
-
-		// 	//iterate one per floor
-		// 	for(var h = 0; h < height; h++)
-		// 	{
-		// 		if(h % 4 == 0 && h != height - 1)
-		// 		{
-		// 			for(var j = 0; j < pts.length; j++)
-		// 			{
-		// 				var latlng = [pts[j].lon, pts[j].lat];
-		// 				var pt_xy = proj4('EPSG:4326', 'EPSG:3785', latlng);  
-
-		// 				var vec3 = new THREE.Vector3(
-		// 		    		pt_xy[0] - center_xy[0], 
-		// 		    		h * 5,
-		// 		    		pt_xy[1] - center_xy[1]	
-		// 		    	);					
-
-		// 			    geometry.vertices.push(vec3);
-		// 			}
-		// 		}
-
-		// 		//do something when its top
-		// 		if(h == height - 1)
-		// 		{
-		// 			for(var j = 0; j < pts.length; j++)
-		// 			{
-		// 				var latlng = [pts[j].lon, pts[j].lat];
-		// 				var pt_xy = proj4('EPSG:4326', 'EPSG:3785', latlng);  
-
-		// 				var vec3 = new THREE.Vector3(
-		// 		    		pt_xy[0] - center_xy[0], 
-		// 		    		h * 5,
-		// 		    		pt_xy[1] - center_xy[1]	
-		// 		    	);					
-
-		// 			    topDotsGeom.vertices.push(vec3);
-		// 			}
-		// 		}
-		// 	}
-
-
-		// 	//draw top and bottom
-		// 	drawBuildingOutline(pts, height);
-
-		// 	var mesh = new THREE.PointCloud( geometry, material );
-		// 	clouds.push(mesh);
-
-		// 	var topDotsMesh = new THREE.PointCloud( topDotsGeom, topDotsMaterial );
-		// 	building_top_dots.push(topDotsMesh);
-
-		// 	// add it to the scene
-		// 	scene.add(mesh);
-		// 	scene.add(topDotsMesh);
-		// }
-
 		
 		return clouds;
 	}
@@ -432,8 +366,8 @@ define(function (require)
 	        analyser.getByteFrequencyData(array);
 	 		// console.log(array);
 
-	 		var floats = new Float32Array(analyser.frequencyBinCount);
-			analyser.getFloatFrequencyData(floats);
+	 	// 	var floats = new Float32Array(analyser.frequencyBinCount);
+			// analyser.getFloatFrequencyData(floats);
 
 			// beatdetect.detect(floats);
 
@@ -450,7 +384,7 @@ define(function (require)
 				bassSize = 2.75;
 				// console.log("new beat!");
 			}
-			if(bassSize > 0) bassSize -= .05;
+			if(bassSize > 0) bassSize -= .025;
 
 			drawLines(bassSize, large_roads_lines);
 
@@ -475,10 +409,7 @@ define(function (require)
 				getAverageVolume(array.subarray(0, 80))
 			];
 
-			console.log(lowsMidsHighs);
-
-			// avg = getAverageVolume(array.subarray(50, -50));
-			// console.log(avg);
+			// console.log(lowsMidsHighs);
 
 			for(var i = 0; i < lowsMidsHighsBuildingsGroups.length; i++)
 			{
@@ -509,10 +440,14 @@ define(function (require)
 
 	function drawLines(size, lines)
 	{
-		for(var i = 0; i < lines.length; i++)
+		if(size > 0.0);
 		{
-			var line = lines[i];
-			line.material.linewidth = size;
+			for(var i = 0; i < lines.length; i++)
+			{
+				var line = lines[i];
+				line.material.linewidth = size;
+				line.material.uniforms.burst.value = size;
+			}
 		}
 	}
 

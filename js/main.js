@@ -16,7 +16,7 @@ define(function (require)
 	var width = window.innerWidth;
 	var height = window.innerHeight;
 	var sc_client_id = '08b1532d93712c611b7a82da20ac52ca';
-	var camXDist = 675, camYDist = 850;
+	var camXDist = 500, camYDist = 850;
 	var controls;
 	var dropArea;
 	var processor;
