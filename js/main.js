@@ -44,8 +44,12 @@ define(function (require)
 		    return;   
 		}
 		
-	    var gl = $("#debugCtx")[0].getContext("webgl");   
+	    // var gl = $("#debugCtx")[0].getContext("webgl");   
+	    var canvas = document.createElement('canvas');
+	    var gl = canvas.getContext("webgl")
 		if (!gl) {
+
+			console.log("WOO");
 		    // Browser could not initialize WebGL. User probably needs to
 		    // update their drivers or get a new browser. Present a link to
 		    // http://get.webgl.org/troubleshooting
@@ -155,41 +159,41 @@ define(function (require)
 
 		};
 
-		var gui = new dat.GUI();
+		// var gui = new dat.GUI();
 
-		gui.add( effectController, "enabled" ).onChange( matChanger );
-		gui.add( effectController, "jsDepthCalculation" ).onChange( matChanger );
-		gui.add( effectController, "shaderFocus" ).onChange( matChanger );
-		gui.add( effectController, "focalDepth", 0.0, 200.0 ).listen().onChange( matChanger );
+		// gui.add( effectController, "enabled" ).onChange( matChanger );
+		// gui.add( effectController, "jsDepthCalculation" ).onChange( matChanger );
+		// gui.add( effectController, "shaderFocus" ).onChange( matChanger );
+		// gui.add( effectController, "focalDepth", 0.0, 200.0 ).listen().onChange( matChanger );
 
-		gui.add( effectController, "fstop", 0.1, 22, 0.001 ).onChange( matChanger );
-		gui.add( effectController, "maxblur", 0.0, 5.0, 0.025 ).onChange( matChanger );
+		// gui.add( effectController, "fstop", 0.1, 22, 0.001 ).onChange( matChanger );
+		// gui.add( effectController, "maxblur", 0.0, 5.0, 0.025 ).onChange( matChanger );
 
-		gui.add( effectController, "showFocus" ).onChange( matChanger );
-		gui.add( effectController, "manualdof" ).onChange( matChanger );
-		gui.add( effectController, "vignetting" ).onChange( matChanger );
+		// gui.add( effectController, "showFocus" ).onChange( matChanger );
+		// gui.add( effectController, "manualdof" ).onChange( matChanger );
+		// gui.add( effectController, "vignetting" ).onChange( matChanger );
 
-		gui.add( effectController, "depthblur" ).onChange( matChanger );
+		// gui.add( effectController, "depthblur" ).onChange( matChanger );
 
-		gui.add( effectController, "threshold", 0, 1, 0.001 ).onChange( matChanger );
-		gui.add( effectController, "gain", 0, 100, 0.001 ).onChange( matChanger );
-		gui.add( effectController, "bias", 0,3, 0.001 ).onChange( matChanger );
-		gui.add( effectController, "fringe", 0, 5, 0.001 ).onChange( matChanger );
+		// gui.add( effectController, "threshold", 0, 1, 0.001 ).onChange( matChanger );
+		// gui.add( effectController, "gain", 0, 100, 0.001 ).onChange( matChanger );
+		// gui.add( effectController, "bias", 0,3, 0.001 ).onChange( matChanger );
+		// gui.add( effectController, "fringe", 0, 5, 0.001 ).onChange( matChanger );
 
-		gui.add( effectController, "focalLength", 16, 80, 0.001 ).onChange( matChanger )
+		// gui.add( effectController, "focalLength", 16, 80, 0.001 ).onChange( matChanger )
 
-		gui.add( effectController, "noise" ).onChange( matChanger );
+		// gui.add( effectController, "noise" ).onChange( matChanger );
 
-		gui.add( effectController, "dithering", 0, 0.001, 0.0001 ).onChange( matChanger );
+		// gui.add( effectController, "dithering", 0, 0.001, 0.0001 ).onChange( matChanger );
 
-		gui.add( effectController, "pentagon" ).onChange( matChanger );
+		// gui.add( effectController, "pentagon" ).onChange( matChanger );
 
-		gui.add( shaderSettings, "rings", 1, 8).step(1).onChange( shaderUpdate );
-		gui.add( shaderSettings, "samples", 1, 13).step(1).onChange( shaderUpdate );
+		// gui.add( shaderSettings, "rings", 1, 8).step(1).onChange( shaderUpdate );
+		// gui.add( shaderSettings, "samples", 1, 13).step(1).onChange( shaderUpdate );
 
-		gui.close();
+		// gui.close();
 
-		matChanger();
+		// matChanger();
 	}
 
 	function initPostprocessing() {
@@ -257,10 +261,13 @@ define(function (require)
 
 			SC.get('/resolve', { url: $("#sc_url").val() }, function(track) 
 			{
-				console.log(track);
+				$("#sc_form").hide();
 
 				if(!track.errors)			
-					rackcity.initAudio(track.stream_url + "?client_id=" + sc_client_id);
+				{
+					rackcity.initAudio(track, sc_client_id);
+					animate();
+				}
 				else
 				{
 					console.log("oops: ");
@@ -310,7 +317,7 @@ define(function (require)
 		.done(function(data){		
 			$("#loading").html("");
 			rackcity.init3D(data, center_pt);
-			animate();
+			$("#sc_form").show();
 		})
 		.fail(function(error){
 			console.log(error);

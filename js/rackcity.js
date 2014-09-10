@@ -333,14 +333,23 @@ define(function (require)
 		scene.add(line);
 	}
 
+	var duration; 
 
 	/**
 	 * initAudio() 
 	 * pass URL to start audioContext for managing visualization
 	 **/
-	function initAudio(url)
+	function initAudio(track, sc_client_id)
 	{	
+		var url = track.stream_url + "?client_id=" + sc_client_id;
+		
 		console.log("RackCity::initAudio() " + url);
+
+		duration = track.duration;
+		
+		$("#artist").text(track.title);
+		$("#songinfo").show();
+
 		
 		window.AudioContext = window.AudioContext || window.webkitAudioContext;
 		var audioContext = new AudioContext();
@@ -475,6 +484,7 @@ define(function (require)
 
 	function update() 
 	{	
+		//update song time
 
 	}
 

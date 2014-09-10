@@ -11,7 +11,7 @@ $testLocal = FALSE;
 </head>
 <h1>RACK CITY</h1>
 <div id="soundcloud">
-<form id="sc_form">
+<form id="sc_form"  style="display:none;">
 	<h3 class="title">ENTER SOUNDCLOUD LINK</h3><br/>
 	<input type="text" id="sc_url" name="url" placeholder="soundcloud url" value="https://soundcloud.com/lidogotsongs/zhu-faded-lido-remix"/><br/>
 	<input type="submit" value="SUBMIT"/>
@@ -23,12 +23,11 @@ $testLocal = FALSE;
 	<br/>
 	<span>LONGITUDE: </span><span id="lng" class="light"></span>
 </div>
-<div id="songinfo">
+<div id="songinfo" style="display:none;">
 	<span id="artist">FANCY</span> / <span id="songname" class="light">IGGY AZALEA</span>
 	<br/>
 	<span id="timestamp" class="light">02 : 32 : 02</span>
 </div>
-<canvas id="debugCtx" width=5 height=5></canvas>
 <?php 
 if(!$testLocal)
 	echo '<script src="//cdnjs.cloudflare.com/ajax/libs/three.js/r68/three.min.js"></script>
