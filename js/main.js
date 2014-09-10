@@ -16,7 +16,7 @@ define(function (require)
 	var width = window.innerWidth;
 	var height = window.innerHeight;
 	var sc_client_id = '08b1532d93712c611b7a82da20ac52ca';
-	var camXDist = 1000, camYDist = 1350;
+	var camXDist = 675, camYDist = 850;
 	var controls;
 	var dropArea;
 	var processor;
@@ -64,10 +64,11 @@ define(function (require)
 		container = document.createElement('div');
 		container.style.background_color = "#141a26";
 		document.body.appendChild(container);
-		camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000000);
+		camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 1, 1000000);
 		camera.position.z = 1200;
 		camera.position.x = 650;
 		camera.position.y = 325;
+		// camera.setLens(90, window.innerWidth / window.innerHeight);
 		camera.lookAt(new THREE.Vector3(0,0,0));
 
 		scene = new THREE.Scene();
@@ -146,7 +147,7 @@ define(function (require)
 			postprocessing.enabled = effectController.enabled;
 			postprocessing.bokeh_uniforms[ 'znear' ].value = camera.near;
 			postprocessing.bokeh_uniforms[ 'zfar' ].value = camera.far;
-			camera.setLens(effectController.focalLength);
+			//camera.setLens(effectController.focalLength);
 
 		};
 

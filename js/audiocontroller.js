@@ -23,7 +23,6 @@ define(function (require)
 		javascriptNode = audioContext.createScriptProcessor(512, 1, 1);        
         javascriptNode.onaudioprocess = audioProcessCallback;
 	 	
-
 	 	// fake gain for script processor bug workaround
 		var gainNode = audioContext.createGain();
 		// gainNode.gain.value = 0;			
