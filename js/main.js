@@ -87,8 +87,9 @@ define(function (require)
 		
 		initPostprocessing();
 
-		renderer.autoClear = false;
+		renderer.autoClear = true;
 		renderer.setClearColor(0x141a26, 1);
+		renderer.clear();		
 		container.appendChild(renderer.domElement);
 
 		controls = new THREE.TrackballControls( camera, renderer.domElement );
@@ -377,7 +378,7 @@ define(function (require)
 
 		scene.overrideMaterial = null;
 
-		renderer.clear();
+		// renderer.clear();
 		renderer.render( scene, camera );
 
 		// }
