@@ -146,6 +146,8 @@ define(function (require)
 		return allLines;
 	}
 
+	var lowsMidsHighsBuildingsGroups = [];
+
 	function drawBuildings(container, material)
 	{
 		var particleShaderVertex = 
@@ -189,72 +191,184 @@ define(function (require)
 		topDotsMaterial.uniforms.pointSize.value = 3.0;
 		topDotsMaterial.uniforms.alpha.value = .88;
 
+
+		var buildingsByHeight = [];
+
+		//sort buildings by height
 		for(var i = 0; i < container.length; i++)
 		{
-			var geometry = new THREE.Geometry();
-			
-			// find height or elevation
 			var height = Math.round(container[i]['height']);
 			if(height == null)
 				height = Math.round(container[i]['ele']);
-			if(height == null || height == NaN || height == undefined)
+			if(height === null || isNaN(height) || height == undefined )
 				height = 5;
 
-			//figure out how many points in a floor
-			var pts = container[i]['pts'];
+			buildingsByHeight.push({ ht:height, id:i });
+		}
 
-			//iterate one per floor
-			for(var h = 0; h < height; h++)
-			{
-				if(h % 4 == 0 && h != height - 1)
+		function compare(a,b) {
+		  if (a.ht < b.ht)
+		     return -1;
+		  if (a.ht > b.ht)
+		    return 1;
+		  return 0;
+		}
+
+		buildingsByHeight.sort(compare); // low to high
+
+		//chunk through height arrays in thirds
+		var i,j,temparray,chunk = buildingsByHeight.length / 3;
+
+		for (i=0,j=buildingsByHeight.length; i<j; i+=chunk) 
+		{
+		    temparray = buildingsByHeight.slice(i,i+chunk);
+		    console.log(temparray[0]);
+		    
+		    lowsMidsHighsBuildingsGroups.push(createBuildingGroup(temparray));
+		}
+
+		function createBuildingGroup(tempArray)
+		{
+			var group = {};
+			var geometry = new THREE.Geometry();
+
+			console.log(tempArray.length);
+
+		    for(var k = 0; k < tempArray.length; k++)
+		    {
+		    	var height = tempArray[k].ht;
+		    	var pts = container[tempArray[k].id]['pts'];
+
+		    	for(var h = 0; h < height; h++)
 				{
-					for(var j = 0; j < pts.length; j++)
+					if(h % 4 == 0 && h != height - 1)
 					{
-						var latlng = [pts[j].lon, pts[j].lat];
-						var pt_xy = proj4('EPSG:4326', 'EPSG:3785', latlng);  
+						for(var j = 0; j < pts.length; j++)
+						{
+							var latlng = [pts[j].lon, pts[j].lat];
+							var pt_xy = proj4('EPSG:4326', 'EPSG:3785', latlng);  
 
-						var vec3 = new THREE.Vector3(
-				    		pt_xy[0] - center_xy[0], 
-				    		h * 5,
-				    		pt_xy[1] - center_xy[1]	
-				    	);					
+							var vec3 = new THREE.Vector3(
+					    		pt_xy[0] - center_xy[0], 
+					    		h * 5,
+					    		pt_xy[1] - center_xy[1]	
+					    	);					
 
-					    geometry.vertices.push(vec3);
+						    geometry.vertices.push(vec3);
+						}
+					}
+
+					//do something when its top
+					if(h == height - 1)
+					{
+						for(var j = 0; j < pts.length; j++)
+						{
+							var latlng = [pts[j].lon, pts[j].lat];
+							var pt_xy = proj4('EPSG:4326', 'EPSG:3785', latlng);  
+
+							var vec3 = new THREE.Vector3(
+					    		pt_xy[0] - center_xy[0], 
+					    		h * 5,
+					    		pt_xy[1] - center_xy[1]	
+					    	);					
+
+						    topDotsGeom.vertices.push(vec3);
+						}
 					}
 				}
 
-				//do something when its top
-				if(h == height - 1)
-				{
-					for(var j = 0; j < pts.length; j++)
-					{
-						var latlng = [pts[j].lon, pts[j].lat];
-						var pt_xy = proj4('EPSG:4326', 'EPSG:3785', latlng);  
 
-						var vec3 = new THREE.Vector3(
-				    		pt_xy[0] - center_xy[0], 
-				    		h * 5,
-				    		pt_xy[1] - center_xy[1]	
-				    	);					
+				//draw top and bottom
+				drawBuildingOutline(pts, height);
 
-					    topDotsGeom.vertices.push(vec3);
-					}
-				}
-			}
-
-			//draw top and bottom
-			drawBuildingOutline(pts, height);
-
-			var mesh = new THREE.PointCloud( geometry, material );
-			clouds.push(mesh);
+				
+		    }
+		    
+		    var mesh = new THREE.PointCloud( geometry, material );
+			// clouds.push(mesh);
 
 			var topDotsMesh = new THREE.PointCloud( topDotsGeom, topDotsMaterial );
-			building_top_dots.push(topDotsMesh);
+			// building_top_dots.push(topDotsMesh);
 
 			// add it to the scene
 			scene.add(mesh);
 			scene.add(topDotsMesh);
+
+			group.mainMesh = mesh;
+			group.topDotsMesh = topDotsMesh;
+
+			return group;
 		}
+
+		//create meshes and buildings for chunks of height
+
+		// for(var i = 0; i < container.length; i++)
+		// {
+		// 	var geometry = new THREE.Geometry();
+			
+		// 	// find height or elevation
+		// 	var height = Math.round(container[i]['height']);
+		// 	if(height == null)
+		// 		height = Math.round(container[i]['ele']);
+		// 	if(height == null || height == NaN || height == undefined)
+		// 		height = 5;
+
+		// 	//figure out how many points in a floor
+		// 	var pts = container[i]['pts'];
+
+		// 	//iterate one per floor
+		// 	for(var h = 0; h < height; h++)
+		// 	{
+		// 		if(h % 4 == 0 && h != height - 1)
+		// 		{
+		// 			for(var j = 0; j < pts.length; j++)
+		// 			{
+		// 				var latlng = [pts[j].lon, pts[j].lat];
+		// 				var pt_xy = proj4('EPSG:4326', 'EPSG:3785', latlng);  
+
+		// 				var vec3 = new THREE.Vector3(
+		// 		    		pt_xy[0] - center_xy[0], 
+		// 		    		h * 5,
+		// 		    		pt_xy[1] - center_xy[1]	
+		// 		    	);					
+
+		// 			    geometry.vertices.push(vec3);
+		// 			}
+		// 		}
+
+		// 		//do something when its top
+		// 		if(h == height - 1)
+		// 		{
+		// 			for(var j = 0; j < pts.length; j++)
+		// 			{
+		// 				var latlng = [pts[j].lon, pts[j].lat];
+		// 				var pt_xy = proj4('EPSG:4326', 'EPSG:3785', latlng);  
+
+		// 				var vec3 = new THREE.Vector3(
+		// 		    		pt_xy[0] - center_xy[0], 
+		// 		    		h * 5,
+		// 		    		pt_xy[1] - center_xy[1]	
+		// 		    	);					
+
+		// 			    topDotsGeom.vertices.push(vec3);
+		// 			}
+		// 		}
+		// 	}
+
+
+		// 	//draw top and bottom
+		// 	drawBuildingOutline(pts, height);
+
+		// 	var mesh = new THREE.PointCloud( geometry, material );
+		// 	clouds.push(mesh);
+
+		// 	var topDotsMesh = new THREE.PointCloud( topDotsGeom, topDotsMaterial );
+		// 	building_top_dots.push(topDotsMesh);
+
+		// 	// add it to the scene
+		// 	scene.add(mesh);
+		// 	scene.add(topDotsMesh);
+		// }
 
 		
 		return clouds;
@@ -299,7 +413,7 @@ define(function (require)
 
 		var source = audioContext.createBufferSource();
 		var analyser = audioContext.createAnalyser();
-		analyser.smoothingTimeConstant = .95;
+		analyser.smoothingTimeConstant = .85;
 		analyser.fftSize = 1024;
 
         var bassBeat = false;
@@ -355,16 +469,22 @@ define(function (require)
 			drawLines(trebSize, small_road_lines);
 
 
-			avg = getAverageVolume(array.subarray(50, -50));
+			var lowsMidsHighs = [
+				getAverageVolume(array.subarray(160, 255)),
+				getAverageVolume(array.subarray(80, 160)),
+				getAverageVolume(array.subarray(0, 80))
+			];
+
+			console.log(lowsMidsHighs);
+
+			// avg = getAverageVolume(array.subarray(50, -50));
 			// console.log(avg);
 
-			for(var i = 0; i < building_dots.length; i++)
+			for(var i = 0; i < lowsMidsHighsBuildingsGroups.length; i++)
 			{
-				var bldg = building_dots[i];
-				bldg.material.uniforms.volume.value = map(avg, 20, 230, 0, 2);
-
-				var bldg_top = building_top_dots[i];
-				bldg_top.material.uniforms.volume.value = map(avg, 20, 230, 0, 2);
+				var bldg = lowsMidsHighsBuildingsGroups[i];
+				bldg.mainMesh.material.uniforms.volume.value = map(lowsMidsHighs[i], 40, 230, .5, 1.5);
+				bldg.topDotsMesh.material.uniforms.volume.value = map(lowsMidsHighs[i], 40, 230, .5, 1.5);
 			}
 
 			

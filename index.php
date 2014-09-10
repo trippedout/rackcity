@@ -11,7 +11,7 @@ $testLocal = FALSE;
 </head>
 <h1>RACK CITY</h1>
 <form id="sc_form">
-	<input type="text" id="sc_url" name="url" placeholder="soundcloud url" value="https://soundcloud.com/savoyband/krewella-come-get-it-savoy"/>
+	<input type="text" id="sc_url" name="url" placeholder="soundcloud url" value="https://soundcloud.com/lidogotsongs/zhu-faded-lido-remix"/>
 	<input type="submit"/>
 </form>
 <div id="loading"></div>
