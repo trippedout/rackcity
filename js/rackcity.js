@@ -32,14 +32,8 @@ define(function (require)
 		initHomeLine();
 
 	    //build roads and buildings
-		small_road_lines = drawShit(small_roads, new THREE.LineBasicMaterial({
-	        color: 0xffffff
-	    }));
-
-	    large_roads_lines = drawShit(large_roads, new THREE.LineBasicMaterial({
-	        color: 0xffffffff,
-	        linewidth: 1
-	    }));
+		small_road_lines = drawRoads(small_roads);
+	    large_roads_lines = drawRoads(large_roads);
 
 	    building_dots = drawBuildings(buildings, new THREE.LineBasicMaterial({
 	        color: 0xffffff
@@ -50,15 +44,20 @@ define(function (require)
 	{		
 		var vertexShader = 
 			//'uniform float[512] spectrum;\n' +
+			'varying float vHeight;' +
 		    'void main() {\n' +
 		    '    vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );\n' +
+		    '    vHeight = position.y;\n' +
 		    '    gl_Position = projectionMatrix * mvPosition;\n' +
 		    '}';
 
 		var fragmentShader = 
-		    'varying float vAlpha;\n' +
+		    'varying float vHeight;' +
 		    'void main() {\n' +
-		    '    gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 );\n' +
+		    '	float a = 1.0;\n' +
+		    '	if(vHeight > 750.0) a = 0.0;\n' +
+		    '	else if(vHeight > 400.0) a = (750.0 - vHeight) / 400.0;\n' +
+		    '    gl_FragColor = vec4( 1.0, 1.0, 1.0, a );\n' +
 		    '}';
 
 		var uniforms = {
@@ -68,21 +67,23 @@ define(function (require)
 	    var material = new THREE.ShaderMaterial({
 	        //uniforms:       uniforms,
 	        vertexShader:   vertexShader,
-	        fragmentShader: fragmentShader//,
-	        // transparent:    true
+	        fragmentShader: fragmentShader,
+	        transparent:    true
 	    });
+
+	    material.linewidth = 4;
 
 		//place line up from center
 		var line_geom = new THREE.Geometry();
 		var bottom = new THREE.Vector3(0, 0, 0);
-		var top = new THREE.Vector3(0, 500, 0);
+		var top = new THREE.Vector3(0, 750, 0);
 		line_geom.vertices.push(bottom);
 		line_geom.vertices.push(top);
 		var line = new THREE.Line(line_geom, material);
 	    scene.add(line);
 	}
 
-	function drawShit(container, material)
+	function drawRoads(container)
 	{
 		var vertexShader = 
 			//'uniform float[512] spectrum;\n' +	
@@ -107,7 +108,7 @@ define(function (require)
 		    '    gl_FragColor = vec4( 1.0, 1.0, 1.0, a );//1.0 );\n' +
 		    '}';
 
-	    var material2 = new THREE.ShaderMaterial({
+	    var material = new THREE.ShaderMaterial({
 	        //uniforms:       uniforms,
 	        vertexShader:   vertexShader,
 	        fragmentShader: fragmentShader,
@@ -133,7 +134,7 @@ define(function (require)
 			    geometry.vertices.push(vec3);
 			}
 
-			var line = new THREE.Line(geometry, material2);
+			var line = new THREE.Line(geometry, material);
 			allLines.push(line);
 			scene.add(line);
 		}

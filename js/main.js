@@ -62,6 +62,7 @@ define(function (require)
 	{
 		//init 3D scene
 		container = document.createElement('div');
+		container.style.background_color = "#141a26";
 		document.body.appendChild(container);
 		camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000000);
 		camera.position.z = 1200;
@@ -290,7 +291,8 @@ define(function (require)
 	{
 		$("#loading").html("Loading Location Data...");
 
-	    $("#info").html("Latitude: " + position.coords.latitude + "<br>Longitude: " + position.coords.longitude); 
+	    $("#lat").html(position.coords.latitude);
+	    $("#lng").html(position.coords.longitude); 
 
 	    var url = "proxy/getLocation.php?lat=" + position.coords.latitude + "&lon=" + position.coords.longitude;
 		var center_pt = [position.coords.longitude, position.coords.latitude];

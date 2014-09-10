@@ -6,16 +6,21 @@ $testLocal = FALSE;
 <head>
 <title>Rack City</title>
 <meta charset="utf-8">
-<!-- <link href='http://fonts.googleapis.com/css?family=Lobster&text=LoopWaveformVisualizer' rel='stylesheet' type='text/css'> -->
+<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400' rel='stylesheet' type='text/css'>
 <link href="css/styles.css" rel="stylesheet" type="text/css">
 </head>
-<h1>Rack City</h1>
+<h1>RACK CITY</h1>
 <form id="sc_form">
 	<input type="text" id="sc_url" name="url" placeholder="soundcloud url" value="https://soundcloud.com/savoyband/krewella-come-get-it-savoy"/>
 	<input type="submit"/>
 </form>
 <div id="loading"></div>
-<div id="info">Cool Shit</div>
+<div id="latlng">
+	<span>LATITUDE: </span><span id="lat" class="light"></span>
+	<br/>
+	<span>LONGITUDE: </span><span id="lng" class="light"></span>
+</div>
+
 <canvas id="debugCtx" width=5 height=5></canvas>
 <?php 
 if(!$testLocal)
