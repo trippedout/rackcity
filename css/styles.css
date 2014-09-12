@@ -10,7 +10,7 @@ body {
 }
 h1 {
 	font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif;
-	font-weight: 400;
+	font-weight: 200;
 	font-size: 20pt;
 	position: absolute;
 	top: 40px;
@@ -42,9 +42,11 @@ span {
 }
 
 #soundcloud .title {
-	letter-spacing: .5em;
-	margin-bottom: 0px;
+	letter-spacing: .65em;
+	margin-bottom: 25px;
 	font-weight: 200;
+	font-size: 12pt;
+	color: rgba(255,255,255, .85);
 }
 
 input[type=text] {
@@ -52,11 +54,11 @@ input[type=text] {
 	font-size: 10pt;
 	font-weight: 200;
 	letter-spacing: .1em;  
-    border: 1px solid #d5d5d5;
+    border: none;
     width: 450px;
-    padding: 8px 12px; 
+    padding: 6px 10px; 
     margin-bottom: 20px;
-    background: #191e26;
+    background: rgba(255,255,255,.15);
     color: #ffffff;
     text-align: center;
 }
@@ -91,7 +93,7 @@ input[type=submit] {
 	position: absolute;
 	bottom: 40px;
 	left: 40px;
-	font-size: 12pt;
+	font-size: 10pt;
 	letter-spacing: .2em;
 	line-height: 24px;
 }
@@ -106,9 +108,19 @@ input[type=submit] {
 	line-height: 24px;
 }
 
+#title {
+	font-size: 10pt;
+}
+
+#timestamp {
+	color:#95acb7;
+}
+
 
 #loading {
-	font-size: 26px;
+	font-weight: 200;
+	font-size: 12pt;
+	letter-spacing: .5em;
 	position: absolute;
 	top: 50%;
 	width: 100%;

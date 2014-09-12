@@ -2,7 +2,7 @@
  * lets get visual
 **/
 
-var TESTING = false;
+var TESTING = true;
 var USE_STATS = false;
 
 define(function (require) 
@@ -84,7 +84,7 @@ define(function (require)
 			sortObjects : false
 		});
 		renderer.setSize(window.innerWidth, window.innerHeight);
-		
+
 		initPostprocessing();
 
 		renderer.autoClear = true;
@@ -107,6 +107,7 @@ define(function (require)
 			container.appendChild(stats.domElement);
 		}
 
+		initSkymap();
 		rackcity.setup(scene);
 
 		//init listeners
@@ -115,6 +116,41 @@ define(function (require)
 		
 		$(window).resize(onWindowResize);
 		onWindowResize(null);
+	}
+
+	function initSkymap()
+	{
+		var urls = [
+			'imgs/bg_texture.jpg',
+			'imgs/bg_texture.jpg',
+			'imgs/bg_texture.jpg',
+			'imgs/bg_texture.jpg',
+			'imgs/bg_texture.jpg',
+			'imgs/bg_texture.jpg'
+		];
+
+		var cubemap = THREE.ImageUtils.loadTextureCube(urls); // load textures
+		cubemap.format = THREE.RGBFormat;
+
+		var shader = THREE.ShaderLib['cube']; // init cube shader from built-in lib
+		shader.uniforms['tCube'].value = cubemap; // apply textures to shader
+
+		// create shader material
+		var skyBoxMaterial = new THREE.ShaderMaterial( {
+		fragmentShader: shader.fragmentShader,
+		vertexShader: shader.vertexShader,
+		uniforms: shader.uniforms,
+		depthWrite: false,
+		side: THREE.BackSide
+		});
+
+		// create skybox mesh
+		var skybox = new THREE.Mesh(
+		new THREE.CubeGeometry(2000, 2000, 2000),
+		skyBoxMaterial
+		);
+
+		//scene.add(skybox);
 	}
 
 	function initParams() {
@@ -284,7 +320,7 @@ define(function (require)
 
 	function getLocation() 
 	{
-		$("#loading").html("Getting Location...");
+		$("#loading").html("LOCATING");
 
 		if(!TESTING)
 		{
@@ -305,7 +341,7 @@ define(function (require)
 	    $("#lat").html(position.coords.latitude);
 	    $("#lng").html(position.coords.longitude); 
 
-		$("#loading").html("Loading Location Data...");
+		$("#loading").html("LOADING LOCATION DATA");
 
 	    var url = "proxy/getLocation.php?lat=" + position.coords.latitude + "&lon=" + position.coords.longitude;
 		var center_pt = [position.coords.longitude, position.coords.latitude];

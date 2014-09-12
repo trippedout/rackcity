@@ -75,7 +75,7 @@ define(function (require)
 	        transparent:    true
 	    });
 
-	    material.linewidth = 2;
+	    material.linewidth = 3;
 
 		//place line up from center
 		var line_geom = new THREE.Geometry();
@@ -123,6 +123,8 @@ define(function (require)
 	        fragmentShader: fragmentShader,
 	        transparent:    true
 	    });
+
+	    material.linewidth = 2;
 
 		var allLines = [];
 
@@ -175,7 +177,7 @@ define(function (require)
 
 	    // uniforms
 	    var uniforms = {
-	        color: { type: "c", value: new THREE.Color( 0xffffff ) },
+	        color: { type: "c", value: new THREE.Color( 0xd1effd ) },
 	        volume: { type: "f", value: 0 },
 	        pointSize: { type: "f", value: 2 }, 
 	        alpha: { type: "f", value: 0.5 }, 
@@ -195,6 +197,7 @@ define(function (require)
 		var topDotsMaterial = material.clone();
 		topDotsMaterial.uniforms.pointSize.value = 3.0;
 		topDotsMaterial.uniforms.alpha.value = .88;
+		topDotsMaterial.uniforms.color.value = new THREE.Color(0xffffff);
 
 
 		var buildingsByHeight = [];
@@ -343,11 +346,12 @@ define(function (require)
 	{	
 		var url = track.stream_url + "?client_id=" + sc_client_id;
 		
-		console.log("RackCity::initAudio() " + url);
+		console.log("RackCity::initAudio() ");
+		console.log(track);
 
 		duration = track.duration;
 		
-		$("#artist").text(track.title);
+		$("#title").text(track.title);
 		$("#songinfo").show();
 
 		

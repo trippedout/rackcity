@@ -24,7 +24,7 @@ $testLocal = FALSE;
 	<span>LONGITUDE: </span><span id="lng" class="light"></span>
 </div>
 <div id="songinfo" style="display:none;">
-	<span id="artist">FANCY</span> / <span id="songname" class="light">IGGY AZALEA</span>
+	<span id="title">FANCY</span>
 	<br/>
 	<span id="timestamp" class="light">0 : 30 : 00</span>
 </div>
