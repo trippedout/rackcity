@@ -23,7 +23,7 @@ $testLocal = FALSE;
 	<br/>
 	<span>LONGITUDE: </span><span id="lng" class="light"></span>
 </div>
-<div id="chooseLocation" class="styled-select">
+<div id="chooseLocation" class="styled-select" style="display:none;">
    <select id="locationSelect" dir="rtl">
    		<option>CURRENT</option>
 		<option>CHICAGO</option>

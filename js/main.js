@@ -183,6 +183,7 @@ define(function (require)
 				if(!track.errors)			
 				{
 					rackcity.initAudio(track, sc_client_id);
+					$("#chooseLocation").show();
 					animate();
 				}
 				else
