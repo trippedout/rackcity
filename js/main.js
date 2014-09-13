@@ -3,6 +3,7 @@
 **/
 
 var TESTING = false;
+var APP_ENGINE = true;
 var USE_STATS = false;
 
 define(function (require) 
@@ -347,7 +348,13 @@ define(function (require)
 
 		$("#loading").html("LOADING LOCATION DATA");
 
-	    var url = "proxy/getLocation.php?lat=" + position.coords.latitude + "&lon=" + position.coords.longitude;
+		var url;
+
+		if(APP_ENGINE)
+	    	url = "http://sodium-airport-702.appspot.com/?lat=" + position.coords.latitude + "&lon=" + position.coords.longitude;
+	    else
+	    	url = "proxy/getLocation.php?lat=" + position.coords.latitude + "&lon=" + position.coords.longitude;
+
 		var center_pt = [position.coords.longitude, position.coords.latitude];
 
 		//testing

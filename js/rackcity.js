@@ -231,9 +231,7 @@ define(function (require)
 
 		for (i=0,j=buildingsByHeight.length; i<j; i+=chunk) 
 		{
-		    temparray = buildingsByHeight.slice(i,i+chunk);
-		    console.log(temparray[0]);
-		    
+		    temparray = buildingsByHeight.slice(i,i+chunk);		    
 		    lowsMidsHighsBuildingsGroups.push(createBuildingGroup(temparray));
 		}
 
@@ -241,8 +239,6 @@ define(function (require)
 		{
 			var group = {};
 			var geometry = new THREE.Geometry();
-
-			console.log(tempArray.length);
 
 		    for(var k = 0; k < tempArray.length; k++)
 		    {

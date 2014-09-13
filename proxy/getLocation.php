@@ -33,16 +33,22 @@ out;';
 
 $context = stream_context_create( array('http' => array(
     'method'  => 'POST',
-    'header' => array('Content-Type: application/x-www-form-urlencoded'),
+    // 'header' => array('Content-Type: application/x-www-form-urlencoded'), //comment out headers for attachment to app engine
     'content' => 'data=' . urlencode($query),
+  	// 'header' => 'Access-Control-Allow-Origin: \'*\'',
 )));
 
 $endpoint = 'http://overpass-api.de/api/interpreter';
 
 $json = file_get_contents($endpoint, false, $context);
-$base = json_decode($json, TRUE);
 
-// echo $base;
+if (false === $json) {
+    $error = error_get_last();
+    echo $error['message'];
+    // throw new ClientException($error['message']);
+}
+
+$base = json_decode($json, TRUE);    
 
 $small_roads = array();
 $large_roads = array();
@@ -86,6 +92,9 @@ $response = new stdClass();
 $response->small_roads = $small_roads;
 $response->large_roads = $large_roads;
 $response->buildings = $buildings;
+
+header('Content-Type: text/plain');
+header('Access-Control-Allow-Origin: *');
 
 echo json_encode($response);
 
