@@ -211,7 +211,7 @@ define(function (require)
 			if(isNaN(height))
 				height = Math.round(container[i]['levels']) * 4;
 			if(isNaN(height))
-				height = 5;
+				height = 20;
 
 			buildingsByHeight.push({ ht:height, id:i });
 		}
