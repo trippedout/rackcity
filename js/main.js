@@ -2,7 +2,7 @@
  * lets get visual
 **/
 
-var TESTING = true;
+var TESTING = false;
 var APP_ENGINE = false;
 var USE_STATS = false;
 
@@ -32,6 +32,8 @@ define(function (require)
 		samples: 4
 	};
 	var material_depth;
+
+	var currentLocationData, currentLocationCenterPt;
 
 	var coordsList = {
 		"CHICAGO" : { data: 'data/chicago.json', coords:{latitude:"41.8893", longitude:"-87.62625"}},
@@ -222,6 +224,8 @@ define(function (require)
 		if(choice == "CURRENT")
 		{
 			//refresh current data
+			if(currentLocationData != null)
+				getLocationSuccess(); //send no data
 		}
 		else
 		{
@@ -231,6 +235,19 @@ define(function (require)
 
 	function getLocationSuccess(position, fromList) 
 	{
+		//YUP - THIS IS DUMB
+		if(position == undefined)
+		{
+			$("#loading").html("");
+			$("#lat").html(currentLocationCenterPt.latitude);
+	    	$("#lng").html(currentLocationCenterPt.longitude); 
+
+	    	clearScene();
+	    	rackcity.init3D(currentLocationData, currentLocationCenterPt);
+			return;
+		}
+
+
 	    $("#lat").html(position.coords.latitude);
 	    $("#lng").html(position.coords.longitude); 
 
@@ -257,7 +274,14 @@ define(function (require)
 			rackcity.init3D(data, center_pt);
 
 			if(!fromList)
+			{
+				//hopefully this is firing because its come from the inital choice 
+				//so lets store the data as current location
+				currentLocationData = data;
+				currentLocationCenterPt = center_pt;
+
 				$("#sc_form").show();
+			}
 		})
 		.fail(function(error){
 			console.log(error);
