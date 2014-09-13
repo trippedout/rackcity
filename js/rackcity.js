@@ -205,10 +205,12 @@ define(function (require)
 		//sort buildings by height
 		for(var i = 0; i < container.length; i++)
 		{
-			var height = Math.round(container[i]['height']);
-			if(height == null)
+			var height = Math.round(container[i]['height']);			
+			if(isNaN(height))
 				height = Math.round(container[i]['ele']);
-			if(height === null || isNaN(height) || height == undefined )
+			if(isNaN(height))
+				height = Math.round(container[i]['levels']) * 4;
+			if(isNaN(height))
 				height = 5;
 
 			buildingsByHeight.push({ ht:height, id:i });
@@ -431,8 +433,8 @@ define(function (require)
 			for(var i = 0; i < lowsMidsHighsBuildingsGroups.length; i++)
 			{
 				var bldg = lowsMidsHighsBuildingsGroups[i];
-				bldg.mainMesh.material.uniforms.volume.value = map(lowsMidsHighs[i], 40, 230, .5, 1.5);
-				bldg.topDotsMesh.material.uniforms.volume.value = map(lowsMidsHighs[i], 40, 230, .5, 1.5);
+				bldg.mainMesh.material.uniforms.volume.value = map(lowsMidsHighs[i], 40, 230, .35, 1.1);
+				bldg.topDotsMesh.material.uniforms.volume.value = map(lowsMidsHighs[i], 40, 230, .35, 1.1);
 			}
 
 			

@@ -33,6 +33,10 @@ define(function (require)
 	};
 	var material_depth;
 
+	var coords = {
+		"CHICAGO" : {coords:{latitude:"41.8893", longitude:"-87.62625"}}
+	};
+
 	$(document).ready(function() 
 	{
 		if (!window.WebGLRenderingContext) 

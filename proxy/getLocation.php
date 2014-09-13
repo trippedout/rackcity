@@ -1,5 +1,15 @@
 <?php 
 
+/*
+* DISCLAIMER: I haven't written php in YEARS, and yes i know recursively moving 
+* through potentially huge arrays of data (multiple times) is a turrrrble idea.
+* fixes welcome, always looking to learn. didn't have enough time to try and
+* write this in python which would have been my goto
+* tested my queries here: http://overpass-turbo.eu/
+* and logged data against http://osmbuildings.org/ to make sure it looked similar enough
+* altho some other colored data exists there and im not sure where its coming from
+*/
+
 $lat = $_GET['lat'];
 $lon = $_GET['lon'];
 
@@ -148,10 +158,13 @@ function addBuilding($building)
 	$obj = new stdClass();
 	if($building['tags']['height'])
 		$obj->height = $building['tags']['height'];
-	if($building['tags']['building:levels'])
-		$obj->levels = $building['tags']['building:levels'];
 	if($building['tags']['ele'])
 		$obj->ele = $building['tags']['ele'];
+	if($building['tags']['building:levels'])
+		$obj->levels = $building['tags']['building:levels'];
+	
+	// echo json_encode($obj);
+
 	$obj->pts = $building_pts;
 
 	$buildings[] = $obj;	
