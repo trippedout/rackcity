@@ -1,4 +1,4 @@
-brickcity
+rack city
 =========
 
 WebGL Music Viz for Mashable sponsored by Intel 2-1s.
