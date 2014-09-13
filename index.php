@@ -34,8 +34,8 @@ $testLocal = FALSE;
 </div>
 <div id="songinfo" style="display:none;">
 	<span id="title">FANCY</span>
-	<br/>
-	<span id="timestamp" class="light">0 : 00 : 00</span>
+	<!-- <br/>
+	<span id="timestamp" class="light">0 : 00 : 00</span> -->
 </div>
 
 <?php 
