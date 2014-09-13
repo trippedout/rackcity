@@ -2,7 +2,7 @@
  * lets get visual
 **/
 
-var TESTING = true;
+var TESTING = false;
 var USE_STATS = false;
 
 define(function (require) 
@@ -107,7 +107,7 @@ define(function (require)
 			container.appendChild(stats.domElement);
 		}
 
-		initSkymap();
+		// initSkymap();
 		rackcity.setup(scene);
 
 		//init listeners
@@ -150,7 +150,7 @@ define(function (require)
 		skyBoxMaterial
 		);
 
-		//scene.add(skybox);
+		scene.add(skybox);
 	}
 
 	function initParams() {
@@ -332,7 +332,7 @@ define(function (require)
 		}
 		else
 		{
-			getLocationSuccess({coords:{latitude:"40.714352999999996", longitude:"-74.005973"}});
+			getLocationSuccess({coords:{latitude:"41.8893", longitude:"-87.62625"}});
 		}
 	}
 
@@ -347,8 +347,8 @@ define(function (require)
 		var center_pt = [position.coords.longitude, position.coords.latitude];
 
 		//testing
-		if(TESTING)
-			url = 'data/nyc.json';
+		// if(TESTING)
+		// 	url = 'data/nyc.json';
 
 		$.getJSON(url)
 		.done(function(data){		

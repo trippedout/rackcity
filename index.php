@@ -19,6 +19,7 @@ $testLocal = FALSE;
 </div>
 <div id="loading"></div>
 <div id="latlng">
+	
 	<span>LATITUDE: </span><span id="lat" class="light"></span>
 	<br/>
 	<span>LONGITUDE: </span><span id="lng" class="light"></span>

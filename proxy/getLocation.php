@@ -5,6 +5,7 @@ $lon = $_GET['lon'];
 
 //create query based off 1km (approx 0.008 deg) around user location
 $latlng = '(' . ($lat - .004) . ',' . ($lon - .004) . ',' . ($lat + .004) . ',' . ($lon + .004) . ')';
+
 $query = '[out:json];
 (
   way
@@ -18,6 +19,8 @@ $query = '[out:json];
 );
 out;';
 
+// echo $query;
+
 $context = stream_context_create( array('http' => array(
     'method'  => 'POST',
     'header' => array('Content-Type: application/x-www-form-urlencoded'),
@@ -28,6 +31,8 @@ $endpoint = 'http://overpass-api.de/api/interpreter';
 
 $json = file_get_contents($endpoint, false, $context);
 $base = json_decode($json, TRUE);
+
+// echo $base;
 
 $small_roads = array();
 $large_roads = array();

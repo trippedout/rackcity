@@ -138,9 +138,9 @@ define(function (require)
 				var latlng = [pts[j].lon, pts[j].lat];
 				var pt_xy = proj4('EPSG:4326', 'EPSG:3785', latlng);  
 				var vec3 = new THREE.Vector3(
-		    		pt_xy[0] - center_xy[0], 
+		    		pt_xy[1] - center_xy[1],
 		    		0,
-		    		pt_xy[1] - center_xy[1]
+		    		pt_xy[0] - center_xy[0]
 		    	);
 			    geometry.vertices.push(vec3);
 			}
@@ -257,9 +257,9 @@ define(function (require)
 							var pt_xy = proj4('EPSG:4326', 'EPSG:3785', latlng);  
 
 							var vec3 = new THREE.Vector3(
-					    		pt_xy[0] - center_xy[0], 
+					    		pt_xy[1] - center_xy[1],
 					    		h * 5,
-					    		pt_xy[1] - center_xy[1]	
+					    		pt_xy[0] - center_xy[0] 
 					    	);					
 
 						    geometry.vertices.push(vec3);
@@ -275,9 +275,9 @@ define(function (require)
 							var pt_xy = proj4('EPSG:4326', 'EPSG:3785', latlng);  
 
 							var vec3 = new THREE.Vector3(
-					    		pt_xy[0] - center_xy[0], 
+					    		pt_xy[1] - center_xy[1], 
 					    		h * 5,
-					    		pt_xy[1] - center_xy[1]	
+					    		pt_xy[0] - center_xy[0]
 					    	);					
 
 						    topDotsGeom.vertices.push(vec3);
@@ -321,9 +321,9 @@ define(function (require)
 			var pt_xy = proj4('EPSG:4326', 'EPSG:3785', latlng);  
 
 			var vec3 = new THREE.Vector3(
-	    		pt_xy[0] - center_xy[0], 
+	    		pt_xy[1] - center_xy[1], 
 	    		0, //height === undefined ? 0 : height * 5,
-	    		pt_xy[1] - center_xy[1]	
+	    		pt_xy[0] - center_xy[0]
 	    	);					
 
 		    geometry.vertices.push(vec3);
