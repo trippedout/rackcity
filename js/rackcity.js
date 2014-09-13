@@ -13,11 +13,11 @@ define(function (require)
 	var large_roads_lines, small_road_lines;
 	var building_dots = [], building_top_dots = [];
 
+	var lowsMidsHighsBuildingsGroups = [];
+
 	function setup(sc)
 	{
 		scene = sc;
-
-
 	}
 
 	function init3D(data, center_pt) 
@@ -30,6 +30,8 @@ define(function (require)
 		large_roads = data['large_roads'];
 		buildings = data['buildings'];
 
+		lowsMidsHighsBuildingsGroups = [];
+
 		//get center pt xy projection for normalizing other points
 		center_xy = proj4('EPSG:4326', 'EPSG:3785', center_pt);
 
@@ -39,9 +41,7 @@ define(function (require)
 		small_road_lines = drawRoads(small_roads);
 	    large_roads_lines = drawRoads(large_roads);
 
-	    building_dots = drawBuildings(buildings, new THREE.LineBasicMaterial({
-	        color: 0xffffff
-	    }));
+	    drawBuildings(buildings);
 	}
 
 	function initHomeLine()
@@ -153,9 +153,7 @@ define(function (require)
 		return allLines;
 	}
 
-	var lowsMidsHighsBuildingsGroups = [];
-
-	function drawBuildings(container, material)
+	function drawBuildings(container)
 	{
 		var particleShaderVertex = 
 			'uniform float pointSize;\n' +
@@ -291,11 +289,8 @@ define(function (require)
 		    }
 		    
 		    var mesh = new THREE.PointCloud( geometry, material );
-			// clouds.push(mesh);
-
 			var topDotsMesh = new THREE.PointCloud( topDotsGeom, topDotsMaterial );
-			// building_top_dots.push(topDotsMesh);
-
+			
 			// add it to the scene
 			scene.add(mesh);
 			scene.add(topDotsMesh);
@@ -304,9 +299,7 @@ define(function (require)
 			group.topDotsMesh = topDotsMesh;
 
 			return group;
-		}
-		
-		return clouds;
+		}		
 	}
 
 	function drawBuildingOutline(pts, height)

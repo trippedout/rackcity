@@ -23,11 +23,21 @@ $testLocal = FALSE;
 	<br/>
 	<span>LONGITUDE: </span><span id="lng" class="light"></span>
 </div>
+<div id="chooseLocation" class="styled-select">
+   <select id="locationSelect" dir="rtl">
+   		<option>CURRENT</option>
+		<option>CHICAGO</option>
+		<option>DOWNTOWN NYC</option>
+		<option>TOKYO</option>
+		<option>LONDON</option>
+   </select>
+</div>
 <div id="songinfo" style="display:none;">
 	<span id="title">FANCY</span>
 	<br/>
 	<span id="timestamp" class="light">0 : 00 : 00</span>
 </div>
+
 <?php 
 if(!$testLocal)
 	echo '<script src="//cdnjs.cloudflare.com/ajax/libs/three.js/r68/three.min.js"></script>

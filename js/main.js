@@ -110,6 +110,15 @@ define(function (require)
 		// initSkymap();
 		rackcity.setup(scene);
 
+		$( "#locationSelect" ).change(function() {
+			updateLocation();
+		});
+
+		$(document).click(function() {
+			// all dropdowns
+			$('.wrapper-dropdown-1').removeClass('active');
+		});
+
 		//init listeners
 		// $("#loadSample").click( loadSampleAudio);
 		document.onselectStart = function() { return false; };
@@ -205,7 +214,22 @@ define(function (require)
 		}
 	}
 
-	function getLocationSuccess(position) 
+	function updateLocation()
+	{
+		console.log($("#locationSelect").val());
+		var choice = $("#locationSelect").val();
+		
+		if(choice == "CURRENT")
+		{
+			//refresh current data
+		}
+		else
+		{
+			getLocationSuccess(coordsList[choice], true);
+		}
+	}
+
+	function getLocationSuccess(position, fromList) 
 	{
 	    $("#lat").html(position.coords.latitude);
 	    $("#lng").html(position.coords.longitude); 
@@ -225,14 +249,29 @@ define(function (require)
 			url = position.data;
 
 		$.getJSON(url)
-		.done(function(data){		
+		.done(function(data)
+		{		
+			clearScene();
 			$("#loading").html("");
+
 			rackcity.init3D(data, center_pt);
-			$("#sc_form").show();
+
+			if(!fromList)
+				$("#sc_form").show();
 		})
 		.fail(function(error){
 			console.log(error);
 		});
+	}
+
+	function clearScene()
+	{
+		for ( i = scene.children.length - 1; i >= 0 ; i -- ) {
+		    obj = scene.children[ i ];
+		    if ( obj !== camera) {
+		        scene.remove(obj);
+		    }
+		}
 	}
 
 	function showError(error) {
@@ -297,7 +336,49 @@ define(function (require)
 
 		renderer.setSize( window.innerWidth, window.innerHeight );
 	}
+
+
+	function DropDown(el) {
+		this.dd = el;
+		this.placeholder = this.dd.children('span');
+		this.opts = this.dd.find('ul.dropdown > li');
+		this.val = '';
+		this.index = -1;
+		this.initEvents();
+	}
+
+	DropDown.prototype = {
+		initEvents : function() {
+			var obj = this;
+
+			obj.dd.on('click', function(event){
+				$(this).toggleClass('active');
+				return false;
+			});
+
+			obj.opts.on('click',function(){
+				var opt = $(this);
+				obj.val = opt.text();
+				obj.index = opt.index();
+				obj.placeholder.text('Gender: ' + obj.val);
+			});
+		},
+		getValue : function() {
+			return this.val;
+		},
+		getIndex : function() {
+			return this.index;
+		}
+	}
+	
+
+	
 });
+
+
+
+
+		
 
 
 
