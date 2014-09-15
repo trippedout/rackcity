@@ -2,6 +2,7 @@ rack city
 =========
 
 WebGL Music Viz for Mashable sponsored by Intel 2-1s.
+Fun collab with the super-talented JKim - http://www.jonathankim.tv/
 
 This repo is a war zone. Comments are awul, code is rushed (and ugly) and I remembered why I stopped writing JS.
 
