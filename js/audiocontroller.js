@@ -20,7 +20,7 @@ define(function (require)
 		// filter.gain.value = -20;
 
 
-		javascriptNode = audioContext.createScriptProcessor(512, 1, 1);        
+		javascriptNode = audioContext.createScriptProcessor(1024, 1, 1);        
         javascriptNode.onaudioprocess = audioProcessCallback;
 	 	
 	 	// fake gain for script processor bug workaround

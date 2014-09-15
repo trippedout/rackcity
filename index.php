@@ -13,7 +13,7 @@ $testLocal = FALSE;
 <div id="soundcloud">
 <form id="sc_form"  style="display:none;">
 	<h3 class="title">ENTER SOUNDCLOUD LINK</h3><br/>
-	<input type="text" id="sc_url" name="url" placeholder="soundcloud url" value="https://soundcloud.com/lidogotsongs/zhu-faded-lido-remix"/><br/>
+	<input type="text" id="sc_url" name="url" placeholder="soundcloud url" value="https://soundcloud.com/penthouse-penthouse/ecstasy"/><br/>
 	<input type="submit" value="SUBMIT"/>
 </form>
 </div>
@@ -50,8 +50,8 @@ else
 <script src="js/soundcloud.js"></script>
 ';
 ?>
-<!-- <script type="text/javascript" src="js/fft.js"></script>
-<script type="text/javascript" src="js/beatdetect.js"></script> -->
+<script type="text/javascript" src="js/fft.js"></script>
+<script type="text/javascript" src="js/beatdetect.js"></script>
 <script src="js/dat.gui.min.js"></script>
 <script data-main="app" src="js/require.js"></script>
 <script>

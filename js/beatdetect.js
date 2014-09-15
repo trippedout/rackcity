@@ -60,7 +60,7 @@ FFT.BeatDetect = function(timeSize, sampleRate)
 		initFEResources();
 		initGraphs();
 		algorithm = FREQ_ENERGY;
-		sensitivity = 10;
+		sensitivity = 225;
 	// }
 
 	/**
@@ -250,12 +250,12 @@ FFT.BeatDetect = function(timeSize, sampleRate)
 	 * 
 	 * @related BeatDetect
 	 */
-	function setSensitivity(millis)
+	this.setSensitivity = function(millis)
 	{
 		if (millis < 0)
 		{
 			Minim.error("BeatDetect: sensitivity cannot be less than zero. Defaulting to 10.");
-			sensitivity = 10;
+			sensitivity = 300;
 		}
 		else
 		{
@@ -508,7 +508,7 @@ FFT.BeatDetect = function(timeSize, sampleRate)
 		for (var i = 0; i < feBuffer.length; i++)
 		{
 			instant = spect.getAvg(i);
-			console.log(instant);
+			// console.log(instant);
 			E = average(feBuffer[i]);
 			V = variance(feBuffer[i], E);
 			C = (-0.0025714 * V) + 1.5142857;

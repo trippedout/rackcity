@@ -3,7 +3,7 @@ define(function (require)
 	var proj4 = require('proj4'),
 		audioController = require('audiocontroller');
 
-	// var beatdetect = new FFT.BeatDetect(512, 512);
+	
 
 	var scene;
 
@@ -348,15 +348,18 @@ define(function (require)
 		
 		window.AudioContext = window.AudioContext || window.webkitAudioContext;
 		var audioContext = new AudioContext();
+		var sampleRate = audioContext.sampleRate;
 
+		var beatdetect = new FFT.BeatDetect(1024, sampleRate);
+		
 		var source = audioContext.createBufferSource();
 		source.onended = function() {
 			console.log("song over");
 		}
 		
 		var analyser = audioContext.createAnalyser();
-		analyser.smoothingTimeConstant = .85;
-		analyser.fftSize = 1024;
+		analyser.smoothingTimeConstant = 0.85;
+		analyser.fftSize = 2048;
 
         var bassBeat = false;
         var bassMaxSize = 10;
@@ -372,15 +375,18 @@ define(function (require)
 		{
 			var array =  new Uint8Array(analyser.frequencyBinCount);
 	        analyser.getByteFrequencyData(array);
-	 		// console.log(array);
+	 		
+	 		var floats = new Float32Array(analyser.frequencyBinCount);
+	 		analyser.getFloatTimeDomainData(floats);
+	 		// console.log(floats[0]);
 
 	 	// 	var floats = new Float32Array(analyser.frequencyBinCount);
 			// analyser.getFloatFrequencyData(floats);
 
-			// beatdetect.detect(floats);
+			beatdetect.detect(floats);
 
-			// if(beatdetect.isKick() ) console.log("isKick()");
-			// if(beatdetect.isSnare() ) console.log("isSnare()");
+			if(beatdetect.isKick() ) bassSize = 4;//.75; //console.log("isKick()");
+			if(beatdetect.isSnare() ) trebSize = 2.75;// console.log("isSnare()");
 
 			//BASS
 			var avg = getAverageVolume(array.subarray(0,3))
@@ -392,7 +398,7 @@ define(function (require)
 				bassSize = 2.75;
 				// console.log("new beat!");
 			}
-			if(bassSize > 0) bassSize -= .025;
+			if(bassSize > 0) bassSize -= .25;
 
 			drawLines(bassSize, large_roads_lines);
 

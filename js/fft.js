@@ -60,10 +60,13 @@ FFT.fft = function ( ts, sr )
   */
   function fillSpectrum()
   {
+
     for (var i = 0; i < spectrum.length; i++)
     {
       spectrum[i] = Math.sqrt(real[i] * real[i] + imag[i] * imag[i]);
     }
+
+    // console.log(spectrum[0]);
 
     if (whichAverage == LINAVG)
     {
@@ -318,10 +321,12 @@ FFT.fft = function ( ts, sr )
   this.getAvg = function(i)
   {
     var ret;
+
     if (averages.length > 0)
       ret = averages[i];
     else
       ret = 0;
+
     return ret;
   }
   
@@ -330,11 +335,16 @@ FFT.fft = function ( ts, sr )
     var lowBound = freqToIndex(lowFreq);
     var hiBound = freqToIndex(hiFreq);
     var avg = 0;
+
     for (var i = lowBound; i <= hiBound; i++)
     {
       avg += spectrum[i];
     }
+
+
+
     avg /= (hiBound - lowBound + 1);
+
     return avg;
   }
   
@@ -517,34 +527,34 @@ FFT.fft = function ( ts, sr )
     fillSpectrum();
   }
   
-  function forward(buffer, startAt) //float[]
-  {
-    if ( buffer.length - startAt < timeSize )
-    {
-      Minim.error( "FourierTransform.forward: not enough samples in the buffer between " + 
-                   startAt + " and " + buffer.length + " to perform a transform."
-                 );
-      return;  
-    }
+  // function forward(buffer, startAt) //float[]
+  // {
+  //   if ( buffer.length - startAt < timeSize )
+  //   {
+  //     Minim.error( "FourierTransform.forward: not enough samples in the buffer between " + 
+  //                  startAt + " and " + buffer.length + " to perform a transform."
+  //                );
+  //     return;  
+  //   }
     
-    currentWindow.apply( buffer, startAt, timeSize );
-    bitReverseSamples(buffer, startAt);
-    fft();
-    fillSpectrum();
-  }
+  //   currentWindow.apply( buffer, startAt, timeSize );
+  //   bitReverseSamples(buffer, startAt);
+  //   fft();
+  //   fillSpectrum();
+  // }
 
-  function forward(buffReal, buffImag) //float[] float[]
-  {
-    if (buffReal.length != timeSize || buffImag.length != timeSize)
-    {
-      console.log("FFT.forward: The length of the passed buffers must be equal to timeSize().");
-      return;
-    }
-    setComplex(buffReal, buffImag);
-    bitReverseComplex();
-    fft();
-    fillSpectrum();
-  }
+  // function forward(buffReal, buffImag) //float[] float[]
+  // {
+  //   if (buffReal.length != timeSize || buffImag.length != timeSize)
+  //   {
+  //     console.log("FFT.forward: The length of the passed buffers must be equal to timeSize().");
+  //     return;
+  //   }
+  //   setComplex(buffReal, buffImag);
+  //   bitReverseComplex();
+  //   fft();
+  //   fillSpectrum();
+  // }
 /*
   function inverse(buffer) //float[]
   {
@@ -569,7 +579,7 @@ FFT.fft = function ( ts, sr )
   }
 
   */
-  var reverse = [];
+  var reverse;
 
   function buildReverseTable()
   {
@@ -581,6 +591,7 @@ FFT.fft = function ( ts, sr )
     for (var limit = 1, bit = N / 2; limit < N; limit <<= 1, bit >>= 1)
       for (var i = 0; i < limit; i++)
         reverse[i + limit] = reverse[i] + bit;
+
   }
 
   // copies the values in the samples array into the real array
