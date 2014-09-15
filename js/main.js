@@ -3,7 +3,7 @@
 **/
 
 var TESTING = false;
-var APP_ENGINE = false;
+var APP_ENGINE = true;
 var USE_STATS = false;
 
 define(function (require) 
