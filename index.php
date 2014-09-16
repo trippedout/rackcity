@@ -50,8 +50,8 @@ else
 <script src="js/soundcloud.js"></script>
 ';
 ?>
-<script type="text/javascript" src="js/fft.js"></script>
-<script type="text/javascript" src="js/beatdetect.js"></script>
+<script type="text/javascript" src="js/beatdetect/fft.js"></script>
+<script type="text/javascript" src="js/beatdetect/beatdetect.js"></script>
 <script src="js/dat.gui.min.js"></script>
 <script data-main="app" src="js/require.js"></script>
 <script>
