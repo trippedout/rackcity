@@ -61,7 +61,7 @@ define(function (require)
 		    '	float a = 1.0;\n' +
 		    '	if(vHeight > 750.0) a = 0.0;\n' +
 		    '	else if(vHeight > 400.0) a = (750.0 - vHeight) / 400.0;\n' +
-		    '    gl_FragColor = vec4( 0.8, 0.8, 0.8, a - .2 );\n' +
+		    '    gl_FragColor = vec4( 0.8, 0.8, 0.8, a );\n' +
 		    '}';
 
 		var uniforms = {
