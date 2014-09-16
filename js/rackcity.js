@@ -354,22 +354,15 @@ define(function (require)
 		
 		var source = audioContext.createBufferSource();
 		source.onended = function() {
-			console.log("song over");
+			console.log("song over"); //well this shit doesnt work
 		}
 		
 		var analyser = audioContext.createAnalyser();
 		analyser.smoothingTimeConstant = 0.85;
 		analyser.fftSize = 2048;
 
-        var bassBeat = false;
-        var bassMaxSize = 10;
         var bassSize = 0;
-
-        var trebBeat = false;
-        var trebMaxSize = 10;
         var trebSize = 0;
-
-        var midSize = 0;
 
 		audioController.initAudio(url, audioContext, source, analyser, function() 
 		{
@@ -378,52 +371,24 @@ define(function (require)
 	 		
 	 		var floats = new Float32Array(analyser.frequencyBinCount);
 	 		analyser.getFloatTimeDomainData(floats);
-	 		// console.log(floats[0]);
-
-	 	// 	var floats = new Float32Array(analyser.frequencyBinCount);
-			// analyser.getFloatFrequencyData(floats);
-
+	 		
 			beatdetect.detect(floats);
 
+			//todo - push all this to the shader along with 
+			//texture filled with actual float array of sound buffer
 			if(beatdetect.isKick() ) bassSize = 4;//.75; //console.log("isKick()");
-			if(beatdetect.isSnare() ) trebSize = 2.75;// console.log("isSnare()");
-
-			//BASS
-			var avg = getAverageVolume(array.subarray(0,3))
-
-			if(!bassBeat && avg < 210) bassBeat = !bassBeat;			
-			if(bassBeat && avg >= 245)
-			{
-				bassBeat = !bassBeat;
-				bassSize = 2.75;
-				// console.log("new beat!");
-			}
 			if(bassSize > 0) bassSize -= .25;
-
 			drawLines(bassSize, large_roads_lines);
-
-			//HIGH TREBLE
-			avg = getAverageVolume(array.subarray(-50))
-
-			if(!trebBeat && avg == 0) trebBeat = !trebBeat;			
-			if(trebBeat && avg >= 25)
-			{
-				trebBeat = !trebBeat;
-				trebSize = 2.75;
-				// console.log("new beat!");
-			}
+			
+			if(beatdetect.isSnare() ) trebSize = 2.75;// console.log("isSnare()");
 			if(trebSize > 0) trebSize -= .05;
-
 			drawLines(trebSize, small_road_lines);
-
 
 			var lowsMidsHighs = [
 				getAverageVolume(array.subarray(160, 255)),
 				getAverageVolume(array.subarray(80, 160)),
 				getAverageVolume(array.subarray(0, 80))
 			];
-
-			// console.log(lowsMidsHighs);
 
 			for(var i = 0; i < lowsMidsHighsBuildingsGroups.length; i++)
 			{
@@ -432,18 +397,6 @@ define(function (require)
 				bldg.topDotsMesh.material.uniforms.volume.value = map(lowsMidsHighs[i], 40, 230, .35, 1.1);
 			}
 
-			
-
-			// ctx.clearRect(0, 0, canvas.width, canvas.height);
-	 		// for(var i = 0; i < array.length; i++)
-	 		// {
-	 		// 	ctx.beginPath();
-		  //   	ctx.moveTo(i, 256);
-		  //   	ctx.lineTo(i, 256 - array[i]);
-		  //    	ctx.stroke();
-	 		// }
-
-	        // console.log(); //512
 		});
 	}
 
