@@ -252,7 +252,7 @@ define(function (require)
 	    $("#lat").html(position.coords.latitude);
 	    $("#lng").html(position.coords.longitude); 
 
-		$("#loading").html("LOADING LOCATION DATA");
+		$("#loading").html("LOADING LOCATION DATA<br/><span class=\"whoops\">THIS MIGHT TAKE A WHILE</span>");
 
 		var url;
 		if(APP_ENGINE)

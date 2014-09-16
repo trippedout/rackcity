@@ -385,9 +385,9 @@ define(function (require)
 			drawLines(trebSize, small_road_lines);
 
 			var lowsMidsHighs = [
-				getAverageVolume(array.subarray(160, 255)),
-				getAverageVolume(array.subarray(80, 160)),
-				getAverageVolume(array.subarray(0, 80))
+				getAverageVolume(array.subarray(750, 1024)),
+				getAverageVolume(array.subarray(180, 750)),
+				getAverageVolume(array.subarray(0, 180))
 			];
 
 			for(var i = 0; i < lowsMidsHighsBuildingsGroups.length; i++)

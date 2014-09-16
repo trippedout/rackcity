@@ -32,6 +32,12 @@ span {
 	font-weight: 200;
 }
 
+.whoops { 
+	font-weight: 200;
+	font-size: 10pt;
+	margin-top: 10px;
+}
+
 #soundcloud {
 	position: absolute;
 	top: 45%;
