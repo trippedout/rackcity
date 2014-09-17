@@ -14,6 +14,11 @@ This repo is a war zone. Comments are awul, code is rushed (and ugly) and I reme
 
 On a lighter note, this was fun, and some people enjoyed using it and see benefits from developing it further, so without further ado...
 
+known issues
+------------
+
+apparently there is an item in the return object from soundcloud tracks called 'streamable:false' that i didn't know existed. i thought you could stream anything. hopefully get to fixin' that sooner than later so people stop the hate mail
+
 to-do
 ----------
 

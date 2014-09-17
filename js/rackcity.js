@@ -335,11 +335,11 @@ define(function (require)
 	 **/
 	function initAudio(track, sc_client_id)
 	{	
-		var url = track.stream_url + "?client_id=" + sc_client_id;
-		
 		console.log("RackCity::initAudio() ");
 		console.log(track);
 
+		var url = track.stream_url + "?client_id=" + sc_client_id;
+		
 		duration = track.duration;
 		
 		$("#title").text(track.title);
