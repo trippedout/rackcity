@@ -13,7 +13,7 @@ $testLocal = FALSE;
 <div id="soundcloud">
 <form id="sc_form"  style="display:none;">
 	<h3 class="title">ENTER SOUNDCLOUD LINK</h3><br/>
-	<input type="text" id="sc_url" name="url" placeholder="soundcloud url" value="https://soundcloud.com/lidogotsongs/zhu-faded-lido-remix"/><br/>
+	<input type="text" id="sc_url" name="url" placeholder="soundcloud url" value="https://soundcloud.com/muterecords/goldfrapp-ooh-la-la"/><br/>
 	<input type="submit" value="SUBMIT"/>
 </form>
 </div>

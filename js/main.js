@@ -298,6 +298,11 @@ define(function (require)
 		    }
 		}
 	}
+	
+	function loadFakeData(){
+		getLocationSuccess(coordsList["DOWNTOWN NYC"]);
+	}
+	
 
 	function showError(error) {
 	    switch(error.code) {
