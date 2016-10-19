@@ -140,12 +140,14 @@ define(function (require)
 		
 		$('#title').click(function() {
 			$("#sc_form").show();
+			$("#sc_url").select();
 		});
 		$('#share').click(function() {
 			var u =window.location.href.split('?')[0];
 
 			$("#sc_url_share").val(u + "?lat=" + location[0] + "&lon=" + location[1] + "&url=" + encodeURIComponent(soundCloudUrl));
 			$("#sc_form_share").show();
+			$("#sc_url_share").select();
 		});
 		$('#btnCancel').click(function() {
 			$("#sc_form").hide();
@@ -208,11 +210,14 @@ define(function (require)
 			var tracks=[track];
 			if(track.track_count){//playlist
 				tracks=track.tracks;
+			}else if(Array.isArray(track)){
+				tracks=track;
 			}
 
 			if(track==undefined){
 				console.log("error loading track");
 				$("#sc_form").show();
+				$("#sc_url").select();
 			}else{
 				if(!track.errors)			
 				{
