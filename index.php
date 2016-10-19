@@ -8,17 +8,28 @@ $testLocal = FALSE;
 <meta charset="utf-8">
 <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400' rel='stylesheet' type='text/css'>
 <link href="css/styles.css" rel="stylesheet" type="text/css">
+<link href="css/font-awesome.css" rel="stylesheet" type="text/css">
+
 </head>
 <h1>RACK CITY</h1>
 <div id="soundcloud">
 <form id="sc_form"  style="display:none;">
 	<h3 class="title">ENTER SOUNDCLOUD LINK</h3><br/>
-	<input type="text" id="sc_url" name="url" placeholder="soundcloud url" value="https://soundcloud.com/muterecords/goldfrapp-ooh-la-la"/><br/>
-	<input type="submit" value="SUBMIT"/>
+	<input type="text" id="sc_url" name="url" placeholder="soundcloud url" value="https://soundcloud.com/muterecords/sets/goldfrapp-believer-remixes"/><br/>
+	<input type="button" value="CANCEL" id="btnCancel"/> <input type="submit" value="SUBMIT"/>
 </form>
+
+
+<form id="sc_form_share"  style="display:none;">
+	<h3 class="title">SHARE LINK</h3><br/>
+	<input type="text" id="sc_url_share" name="url" placeholder="rack city url" value="" readonly="true"/><br/>
+	<input type="button" value="CLOSE" id="btnClose"/>
+</form>
+
 </div>
+
 <div id="loading"></div>
-<div id="latlng">	
+<div id="latlng">	 
 	<span>LATITUDE: </span><span id="lat" class="light"></span>
 	<br/>
 	<span>LONGITUDE: </span><span id="lng" class="light"></span>
@@ -30,13 +41,23 @@ $testLocal = FALSE;
 		<option>DOWNTOWN NYC</option>
 		<option>TOKYO</option>
 		<option>LONDON</option>
+		<option>ROME</option>
+		<option>BARCELONA</option>
+		
    </select>
 </div>
 <div id="songinfo" style="display:none;">
-	<span id="title">FANCY</span>
-	<!-- <br/>
-	<span id="timestamp" class="light">0 : 00 : 00</span> -->
+	 <span id="title">FANCY</span>
+	 <br/>
+	 <span id="trk_prev"><i class="fa fa-step-backward" aria-hidden="true"></i></span> 
+	 <span id="trackCount">0/0</span> 
+	 <span id="trk_next"><i class="fa fa-step-forward" aria-hidden="true"></i></span>
+	 <span id="trk_pause" style="display:none;"><i class="fa fa-pause" aria-hidden="true"></i></span>
+	 <span id="trk_play"><i class="fa fa-play" aria-hidden="true"></i></span>
+	<span id="timestamp" class="light">00:00:00</span><br>
+	<span id="share">SHARE LINK</span>
 </div>
+
 <a href="https://github.com/trippedout/rackcity"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
 <?php 
 if(!$testLocal)

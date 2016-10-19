@@ -333,21 +333,85 @@ define(function (require)
 	 * initAudio() 
 	 * pass URL to start audioContext for managing visualization
 	 **/
-	function initAudio(track, sc_client_id)
+	var audioContext;
+	var playList=[];
+	var curtrack=0;
+	var client_id;
+	function initAudio(tracks, sc_client_id){
+		playList=tracks;
+		curtrack=0;
+		client_id=sc_client_id;
+		_initAudio(playList[curtrack],client_id);
+	}
+
+	function updateTimestamp(){
+		if(audioContext.currentTime>duration){
+			nextTrack();
+			return;
+		}
+		var date = new Date(null);
+		date.setSeconds(audioContext.currentTime); // specify value for SECONDS here
+		var t=date.toISOString().substr(11, 8);
+		$("#trackCount").text("" + (curtrack+1) + "/" +playList.length);
+		$("#timestamp").text(t);
+		setTimeout(updateTimestamp,1000);
+	}
+
+	function nextTrack(){
+		$("#timestamp").text("00:00:00");
+		curtrack++;
+		if(curtrack>playList.length-1)
+			curtrack=0;
+		_initAudio(playList[curtrack],client_id);
+	}
+
+	function prevTrack(){
+		$("#timestamp").text("00:00:00");
+		curtrack--;
+		if(curtrack<0)
+			curtrack=playList.length-1;
+		_initAudio(playList[curtrack],client_id);
+	}
+
+	function pauseTrack(){
+		audioContext.suspend();
+		$("#trk_pause").hide();
+		$("#trk_play").show();
+	}
+
+	function playTrack(){
+		audioContext.resume();
+		$("#trk_pause").show();
+		$("#trk_play").hide();
+	}
+
+	function _initAudio(track, sc_client_id)
 	{	
 		console.log("RackCity::initAudio() ");
 		console.log(track);
 
 		var url = track.stream_url + "?client_id=" + sc_client_id;
 		
-		duration = track.duration;
+		duration = track.duration/1000;
 		
+		$("#trk_prev").click(prevTrack);
+		$("#trk_next").click(nextTrack);
 		$("#title").text(track.title);
 		$("#songinfo").show();
-
+		setTimeout(updateTimestamp,1000);
 		
 		window.AudioContext = window.AudioContext || window.webkitAudioContext;
-		var audioContext = new AudioContext();
+		if(audioContext)
+			audioContext.close();
+		audioContext = new AudioContext();
+
+		audioContext.ended = function() {
+			console.log("song over"); //well this shit doesnt work
+		}
+		$("#trk_pause").show();
+		$("#trk_play").hide();
+		$("#trk_pause").click(pauseTrack);
+		$("#trk_play").click(playTrack);
 		var sampleRate = audioContext.sampleRate;
 
 		var beatdetect = new FFT.BeatDetect(1024, sampleRate);
@@ -363,7 +427,7 @@ define(function (require)
 
         var bassSize = 0;
         var trebSize = 0;
-
+		
 		audioController.initAudio(url, audioContext, source, analyser, function() 
 		{
 			var array =  new Uint8Array(analyser.frequencyBinCount);

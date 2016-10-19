@@ -49,6 +49,9 @@ span {
 
 #soundcloud form {
 	display:inline-block;
+	background-color: rgba(3, 3, 3, 0.56);
+  	border: 1px solid rgb(202, 199, 199);
+	padding: 10px;
 }
 
 #soundcloud .title {
@@ -76,7 +79,20 @@ input[type=text] {
 input[type=submit] {
     font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif;
     border: hidden;
-    width: 200px;
+    /*width: 200px;*/
+    padding: 5px 10px; 
+    background:transparent;
+    color: #ffffff;
+    text-align: center;
+	cursor: pointer;
+	letter-spacing: .3em;   
+	font-size: 9.5pt;
+	font-weight: 200;
+}
+input[type=button] {
+    font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif;
+    border: hidden;
+    /*width: 200px;*/
     padding: 5px 10px; 
     background:transparent;
     color: #ffffff;
@@ -120,6 +136,11 @@ input[type=submit] {
 
 #title {
 	font-size: 10pt;
+	text-decoration: underline;
+}
+#share {
+	font-size: 10pt;
+	text-decoration: underline;
 }
 
 #timestamp {

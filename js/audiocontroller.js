@@ -7,12 +7,14 @@ define(function (require)
 		var buffer;
 		var audioBuffer;
 
+
+
 		// Load 
 		var request = new XMLHttpRequest();
 		request.open("GET", url, true);
 		request.responseType = "arraybuffer";
 
-
+		
 		// filter for testing low freq's alone
 		var filter = audioContext.createBiquadFilter();
 		filter.type = "lowpass"; 
@@ -28,6 +30,8 @@ define(function (require)
 		// gainNode.gain.value = 0;			
 
 		request.onload = function() {
+			//audioContext.close();
+
 			audioContext.decodeAudioData(request.response, function(buffer) {
 				source.buffer = buffer;
 				source.loop = true;

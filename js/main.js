@@ -24,6 +24,7 @@ define(function (require)
 	var xhr;
 	var started = false;
 	var frameCount = 0;
+	var soundCloudUrl="";
 
 	var postprocessing = { enabled  : true };
 
@@ -34,12 +35,16 @@ define(function (require)
 	var material_depth;
 
 	var currentLocationData, currentLocationCenterPt;
+	var location=[0,0];
 
 	var coordsList = {
 		"CHICAGO" : { data: 'data/chicago.json', coords:{latitude:"41.8893", longitude:"-87.62625"}},
 		"TOKYO" : { data: 'data/tokyo.json', coords:{latitude:"35.69001", longitude: "139.69464"}},
 		"DOWNTOWN NYC" : { data: 'data/nyc.json', coords:{latitude:"40.70869", longitude: "-74.01113"}},
-		"LONDON" : { data: 'data/london.json', coords:{latitude:"51.49994", longitude: "-0.12749"}}
+		"LONDON" : { data: 'data/london.json', coords:{latitude:"51.49994", longitude: "-0.12749"}},
+		"ROME" : {  coords:{latitude:"41.89026", longitude: "12.49237"}},
+		"BARCELONA" : {  coords:{latitude:"41.4036299", longitude: "2.1721671"}}
+
 	};
 
 	$(document).ready(function() 
@@ -68,9 +73,21 @@ define(function (require)
 		//shit works - init!
 		init();
 		initSoundcloud();
-		getLocation();
+		var lat=getParameterByName("lat");
+		var lon=getParameterByName("lon");
+		var url=getParameterByName("url");
+		if(url)
+			soundCloudUrl=decodeURIComponent(url);
+		
+		if(lat && lon)
+			getLocationSuccess( {coords:{latitude:parseFloat(lat), longitude:parseFloat(lon)}},false);
+		else
+			getLocation();
 	});
-
+	function getParameterByName(name) {
+		var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+		return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+	}
 	function init() 
 	{
 		//init 3D scene
@@ -120,6 +137,22 @@ define(function (require)
 			// all dropdowns
 			$('.wrapper-dropdown-1').removeClass('active');
 		});
+		
+		$('#title').click(function() {
+			$("#sc_form").show();
+		});
+		$('#share').click(function() {
+			var u =window.location.href.split('?')[0];
+
+			$("#sc_url_share").val(u + "?lat=" + location[0] + "&lon=" + location[1] + "url=" + encodeURIComponent(soundCloudUrl));
+			$("#sc_form_share").show();
+		});
+		$('#btnCancel').click(function() {
+			$("#sc_form").hide();
+		});
+		$('#btnClose').click(function() {
+			$("#sc_form_share").hide();
+		});
 
 		//init listeners
 		// $("#loadSample").click( loadSampleAudio);
@@ -166,6 +199,37 @@ define(function (require)
 		scene.add(skybox);
 	}
 
+	function loadSoundCloud(url){
+		event.preventDefault();
+
+		SC.get('/resolve', { url: url}, function(track) 
+		{
+			$("#sc_form").hide();
+			var tracks=[track];
+			if(track.track_count){//playlist
+				tracks=track.tracks;
+			}
+
+			if(track==undefined){
+				console.log("error loading track");
+				$("#sc_form").show();
+			}else{
+				if(!track.errors)			
+				{
+					rackcity.initAudio(tracks, sc_client_id);
+					$("#chooseLocation").show();
+					animate();
+				}else
+				{
+					console.log("oops: ");
+					console.log(track.errors[0].error_message)
+				}
+			}
+			
+			
+		});
+	}
+
 	function initSoundcloud()
 	{
 		SC.initialize({
@@ -174,24 +238,8 @@ define(function (require)
 
 		$("#sc_form").submit(function(event)
 		{
-			event.preventDefault();
-
-			SC.get('/resolve', { url: $("#sc_url").val() }, function(track) 
-			{
-				$("#sc_form").hide();
-
-				if(!track.errors)			
-				{
-					rackcity.initAudio(track, sc_client_id);
-					$("#chooseLocation").show();
-					animate();
-				}
-				else
-				{
-					console.log("oops: ");
-					console.log(track.errors[0].error_message)
-				}
-			});
+			soundCloudUrl=$("#sc_url").val();
+			loadSoundCloud(soundCloudUrl);
 		});
 	}
 
@@ -240,8 +288,9 @@ define(function (require)
 		if(position == undefined)
 		{
 			$("#loading").html("");
-			$("#lat").html(currentLocationCenterPt.latitude);
-	    	$("#lng").html(currentLocationCenterPt.longitude); 
+			$("#lat").html(parseFloat(currentLocationCenterPt.latitude).toFixed(3));
+	    	$("#lng").html(parseFloat(currentLocationCenterPt.longitude).toFixed(3)); 
+			location=[currentLocationCenterPt.latitude,currentLocationCenterPt.longitude];
 
 	    	clearScene();
 	    	rackcity.init3D(currentLocationData, currentLocationCenterPt);
@@ -249,8 +298,9 @@ define(function (require)
 		}
 
 
-	    $("#lat").html(position.coords.latitude);
-	    $("#lng").html(position.coords.longitude); 
+	    $("#lat").html(parseFloat(position.coords.latitude).toFixed(3));
+	    $("#lng").html(parseFloat(position.coords.longitude).toFixed(3)); 
+		location=[position.coords.latitude,position.coords.longitude];
 
 		$("#loading").html("LOADING LOCATION DATA<br/><span class=\"whoops\">THIS MIGHT TAKE A WHILE</span>");
 
@@ -274,20 +324,23 @@ define(function (require)
 
 			rackcity.init3D(data, center_pt);
 
-			if(!fromList)
+			//if(!fromList)
 			{
 				//hopefully this is firing because its come from the inital choice 
 				//so lets store the data as current location
 				currentLocationData = data;
 				currentLocationCenterPt = center_pt;
-
-				$("#sc_form").show();
+				if(soundCloudUrl!="")
+					loadSoundCloud(soundCloudUrl);
+				else
+					$("#sc_form").show();
 			}
 		})
 		.fail(function(error){
 			console.log(error);
 		});
 	}
+
 
 	function clearScene()
 	{
@@ -298,7 +351,7 @@ define(function (require)
 		    }
 		}
 	}
-	
+
 	function loadFakeData(){
 		getLocationSuccess(coordsList["DOWNTOWN NYC"]);
 	}
