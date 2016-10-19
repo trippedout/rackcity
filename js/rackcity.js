@@ -358,6 +358,7 @@ define(function (require)
 	}
 
 	function nextTrack(){
+		duration=100000;
 		$("#timestamp").text("00:00:00");
 		curtrack++;
 		if(curtrack>playList.length-1)
@@ -366,6 +367,7 @@ define(function (require)
 	}
 
 	function prevTrack(){
+		duration=100000;
 		$("#timestamp").text("00:00:00");
 		curtrack--;
 		if(curtrack<0)
@@ -394,14 +396,14 @@ define(function (require)
 		
 		duration = track.duration/1000;
 		
-		$("#trk_prev").click(prevTrack);
-		$("#trk_next").click(nextTrack);
+		$("#trk_prev").unbind().click(prevTrack);
+		$("#trk_next").unbind().click(nextTrack);
 		$("#title").text(track.title);
 		$("#songinfo").show();
 		setTimeout(updateTimestamp,1000);
 		
 		window.AudioContext = window.AudioContext || window.webkitAudioContext;
-		if(audioContext)
+		if(audioContext && audioContext.close)
 			audioContext.close();
 		audioContext = new AudioContext();
 
@@ -410,8 +412,8 @@ define(function (require)
 		}
 		$("#trk_pause").show();
 		$("#trk_play").hide();
-		$("#trk_pause").click(pauseTrack);
-		$("#trk_play").click(playTrack);
+		$("#trk_pause").unbind().click(pauseTrack);
+		$("#trk_play").unbind().click(playTrack);
 		var sampleRate = audioContext.sampleRate;
 
 		var beatdetect = new FFT.BeatDetect(1024, sampleRate);

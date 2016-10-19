@@ -144,7 +144,7 @@ define(function (require)
 		$('#share').click(function() {
 			var u =window.location.href.split('?')[0];
 
-			$("#sc_url_share").val(u + "?lat=" + location[0] + "&lon=" + location[1] + "url=" + encodeURIComponent(soundCloudUrl));
+			$("#sc_url_share").val(u + "?lat=" + location[0] + "&lon=" + location[1] + "&url=" + encodeURIComponent(soundCloudUrl));
 			$("#sc_form_share").show();
 		});
 		$('#btnCancel').click(function() {
@@ -200,7 +200,7 @@ define(function (require)
 	}
 
 	function loadSoundCloud(url){
-		event.preventDefault();
+		//event.preventDefault();
 
 		SC.get('/resolve', { url: url}, function(track) 
 		{
@@ -239,6 +239,7 @@ define(function (require)
 		$("#sc_form").submit(function(event)
 		{
 			soundCloudUrl=$("#sc_url").val();
+			event.preventDefault();
 			loadSoundCloud(soundCloudUrl);
 		});
 	}
