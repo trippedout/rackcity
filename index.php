@@ -50,12 +50,8 @@ $testLocal = TRUE;
 <div id="chooseLocation" class="styled-select" style="display:none;">
    <select id="locationSelect" dir="rtl">
    		<option>CURRENT</option>
-		<option>CHICAGO</option>
-		<option>DOWNTOWN NYC</option>
-		<option>TOKYO</option>
-		<option>LONDON</option>
-		<option>ROME</option>
-		<option>BARCELONA</option>
+	
+		
 		
    </select>
 </div>

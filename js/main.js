@@ -42,13 +42,19 @@ define(function (require)
 		"TOKYO" : { data: 'data/tokyo.json', coords:{latitude:"35.69001", longitude: "139.69464"}},
 		"DOWNTOWN NYC" : { data: 'data/nyc.json', coords:{latitude:"40.70869", longitude: "-74.01113"}},
 		"LONDON" : { data: 'data/london.json', coords:{latitude:"51.49994", longitude: "-0.12749"}},
-		"ROME" : {  coords:{latitude:"41.89026", longitude: "12.49237"}},
-		"BARCELONA" : {  coords:{latitude:"41.4036299", longitude: "2.1721671"}}
+		"ROME" : {  data: 'data/rome.json',coords:{latitude:"41.89026", longitude: "12.49237"}},
+		"ROME EUR" : { data: 'data/rome-eur.json', coords:{latitude:"41.828041", longitude: "12.468089"}},
+		"BARCELONA" : {data: 'data/bcn.json',  coords:{latitude:"41.4036299", longitude: "2.1721671"}}
 
 	};
 
 	$(document).ready(function() 
 	{
+		$.each(coordsList,function(t,o){
+			$('#locationSelect').append($('<option>', {text: t}));
+		})
+		
+
 		if (!window.WebGLRenderingContext) 
 		{
 		    // Browser has no idea what WebGL is. Suggest they
@@ -335,6 +341,7 @@ define(function (require)
 	    else
 	    	url = "proxy/getLocation.php?lat=" + position.coords.latitude + "&lon=" + position.coords.longitude;
 
+		console.log(url);
 		var center_pt = [position.coords.longitude, position.coords.latitude];
 
 		//if pulling from local shit, use file
