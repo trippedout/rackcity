@@ -134,6 +134,7 @@ input[type=button] {
 	font-size: 10pt;
 	letter-spacing: .2em;
 	line-height: 24px;
+	cursor: pointer;
 }
 
 #songinfo {
@@ -151,6 +152,10 @@ input[type=button] {
 	min-width: 400px;
   	font-size: 12px;
 }
+#sc_form_position{
+	min-width: 400px;
+}
+
 #playlist{
 	max-height: 300px;
   	overflow-y: auto;
@@ -169,15 +174,25 @@ input[type=button] {
 .pl_duration{
 	  color: #95acb7;
 }
+.latlon{
+	width: 100px !important;
+  	margin-left: 10px;
+	
+}
 
+.pointer{
+	cursor: pointer;
+}
 
 #title {
 	font-size: 10pt;
 	text-decoration: underline;
+	cursor: pointer;
 }
 #share {
 	font-size: 10pt;
 	text-decoration: underline;
+	cursor: pointer;
 }
 
 #timestamp {

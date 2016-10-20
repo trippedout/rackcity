@@ -3,7 +3,7 @@
 **/
 
 var TESTING = false;
-var APP_ENGINE = true;
+var APP_ENGINE = false;
 var USE_STATS = false;
 
 define(function (require) 
@@ -167,10 +167,29 @@ define(function (require)
 		$('#trk_playlist').click(function() {
 			$("#sc_form_playlist").show();
 		});
+		$('#lat').click(function() {
+			$("#sc_latitude").val(location[0]);
+			$("#sc_longitude").val(location[1]);
+			$("#sc_form_position").show();
+		});
+		$('#lng').click(function() {
+			$("#sc_latitude").val(location[0]);
+			$("#sc_longitude").val(location[1]);
+			$("#sc_form_position").show();
+		});
 		$('#btnClosePlaylist').click(function() {
 			$("#sc_form_playlist").hide();
 		});
-		
+		$("#sc_form_position").submit(function(event)
+		{
+			event.preventDefault();
+			$("#sc_form_position").hide();
+			getLocationSuccess({coords:{latitude:$("#sc_latitude").val(), longitude: $("#sc_longitude").val()}},false );
+
+		});
+		$('#btnClosePosition').click(function() {
+			$("#sc_form_position").hide();
+		});
 
 		//init listeners
 		// $("#loadSample").click( loadSampleAudio);

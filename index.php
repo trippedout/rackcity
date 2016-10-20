@@ -26,6 +26,13 @@ $testLocal = TRUE;
 		<input type="button" value="CLOSE" id="btnClose"/>
 	</form>
 
+	<form id="sc_form_position"  style="display:none;">
+		<h3 class="title">POSITION</h3><br/>
+		LATITUDE: <input type="text" id="sc_latitude" class="latlon"/><br/>
+		LONGITUDE: <input type="text" id="sc_longitude" class="latlon"/><br/>
+		<input type="button" value="CANCEL" id="btnClosePosition"/> <input type="submit" value="SUBMIT"/>
+	</form>
+
 	<form id="sc_form_info"  style="display:none;">
 		<h3 class="title" id="info_title"></h3>
 		<span  id="info_msg"></span><br/><br/>
@@ -61,12 +68,12 @@ $testLocal = TRUE;
 	 <br/>
 	 <span id="timestamp" class="light">00:00:00</span>
 	 <br/>
-	 <span id="trk_prev"><i class="fa fa-step-backward" aria-hidden="true"></i></span> 
+	 <span id="trk_prev"><i class="fa fa-step-backward pointer" aria-hidden="true"></i></span> 
 	 <span id="trackCount">0/0</span> 
-	 <span id="trk_next"><i class="fa fa-step-forward" aria-hidden="true"></i></span>
-	 <span id="trk_pause" style="display:none;"><i class="fa fa-pause" aria-hidden="true"></i></span>
-	 <span id="trk_play"><i class="fa fa-play" aria-hidden="true"></i></span>
-	 <span id="trk_playlist"><i class="fa fa-list" aria-hidden="true"></i></span>
+	 <span id="trk_next"><i class="fa fa-step-forward pointer" aria-hidden="true"></i></span>
+	 <span id="trk_pause" style="display:none;"><i class="fa fa-pause pointer" aria-hidden="true"></i></span>
+	 <span id="trk_play"><i class="fa fa-play pointer" aria-hidden="true"></i></span>
+	 <span id="trk_playlist"><i class="fa fa-list pointer" aria-hidden="true"></i></span>
 	
 </div>
 <!--
