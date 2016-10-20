@@ -155,6 +155,12 @@ define(function (require)
 		$('#btnClose').click(function() {
 			$("#sc_form_share").hide();
 		});
+		$('#btnCloseInfo').click(function() {
+			$("#sc_form_info").hide();
+		});
+
+
+
 
 		//init listeners
 		// $("#loadSample").click( loadSampleAudio);
@@ -164,6 +170,13 @@ define(function (require)
 		
 		$(window).resize(onWindowResize);
 		onWindowResize(null);
+	}
+
+	function showInfo(title,msg){
+		$("#info_title").html(title);
+		$("#info_msg").html(msg);
+		$("#sc_form_info").show();
+		animate()
 	}
 
 	function initSkymap()
@@ -207,15 +220,17 @@ define(function (require)
 		SC.get('/resolve', { url: url}, function(track) 
 		{
 			$("#sc_form").hide();
-			var tracks=[track];
+			var tracks;
 			if(track.track_count){//playlist
 				tracks=track.tracks;
 			}else if(Array.isArray(track)){
 				tracks=track;
+			}else if(track!=undefined && !track.errors){
+				tracks=[track];
 			}
 
 			if(track==undefined){
-				console.log("error loading track");
+				showInfo("ERROR","error loading track");
 				$("#sc_form").show();
 				$("#sc_url").select();
 			}else{
@@ -226,8 +241,8 @@ define(function (require)
 					animate();
 				}else
 				{
-					console.log("oops: ");
-					console.log(track.errors[0].error_message)
+					showInfo("ERROR",track.errors[0].error_message);
+
 				}
 			}
 			
@@ -366,17 +381,17 @@ define(function (require)
 	function showError(error) {
 	    switch(error.code) {
 	        case error.PERMISSION_DENIED:
-	            $("#info").html("User denied the request for Geolocation."); //TODO - setup listbox choice
+	            showInfo("ERROR","User denied the request for Geolocation."); //TODO - setup listbox choice
 	            break;
 	        case error.POSITION_UNAVAILABLE:
-	             $("#info").html("Location information is unavailable.");
+	             showInfo("ERROR","Location information is unavailable.");
 	             loadFakeData();
 	            break;
 	        case error.TIMEOUT:
-	             $("#info").html("The request to get user location timed out.");
+	             showInfo("ERROR","The request to get user location timed out.");
 	            break;
 	        case error.UNKNOWN_ERROR:
-	             $("#info").html("An unknown error occurred.");
+	             showInfo("ERROR","An unknown error occurred.");
 	            break;
 	    }
 	}
