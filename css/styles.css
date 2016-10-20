@@ -147,14 +147,22 @@ input[type=button] {
 	width: 100%;
 }
 
+#sc_form_playlist{
+	min-width: 400px;
+  	font-size: 12px;
+}
+#playlist{
+	max-height: 300px;
+  	overflow-y: auto;
+}
 #trackid{
 	margin: 0 10px 5px 10px;
 	text-align: left;
 	clear: both;
 }
 .pl_img{
-	height: 40px;
-	width: 40px;
+	height: 30px;
+	width: 30px;
   	float: left;
   	margin-right: 10px;
 }

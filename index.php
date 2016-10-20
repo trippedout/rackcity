@@ -34,7 +34,7 @@ $testLocal = TRUE;
 
 	<form id="sc_form_playlist"  style="display:none;">
 		<h3 class="title">PLAYLIST</h3>
-		<span  id="playlist"></span><br/><br/>
+		<div  id="playlist"></div><br/><br/>
 		<input type="button" value="CLOSE" id="btnClosePlaylist"/>
 	</form>
 </div>

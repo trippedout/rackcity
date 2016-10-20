@@ -351,7 +351,8 @@ define(function (require)
 			playlist_html+="<span class='pl_duration' class='light'>"+ formatSeconds(t.duration/1000) +"</span></div>"	
 		});
 		$("#playlist").html(playlist_html);
-		curtrack=0;
+		//curtrack=0;
+		curtrack=Math.floor((Math.random() * tracks.length-1));
 		client_id=sc_client_id;
 		_initAudio(playList[curtrack],client_id);
 	}
