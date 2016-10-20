@@ -2,15 +2,19 @@
 $testLocal = TRUE;
 ?>
 <!doctype html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://ogp.me/ns/fb#">
 <head>
 <title>Rack City</title>
 <meta charset="utf-8">
+<meta property="og:image" content="preview.jpg" />
+
 <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400' rel='stylesheet' type='text/css'>
 <link href="css/styles.css" rel="stylesheet" type="text/css">
 <link href="css/font-awesome.css" rel="stylesheet" type="text/css">
 
 </head>
+<body>
+
 <h1>RACK CITY</h1>
 <div id="soundcloud">
 	<form id="sc_form"  style="display:none;">
