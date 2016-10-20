@@ -40,7 +40,7 @@ span {
 
 #soundcloud {
 	position: absolute;
-	top: 45%;
+	top: 120px;
 	width: 100%;
 	display: block;
 	margin-left: auto;
@@ -139,13 +139,29 @@ input[type=button] {
 #songinfo {
 	text-align: left;
 	position: absolute;
-	top: 40px;
+	top: 10px;
 	left: 40px;
 	font-size: 12pt;
 	letter-spacing: .2em;
 	line-height: 24px;
 	width: 100%;
 }
+
+#trackid{
+	margin: 0 10px 5px 10px;
+	text-align: left;
+	clear: both;
+}
+.pl_img{
+	height: 40px;
+	width: 40px;
+  	float: left;
+  	margin-right: 10px;
+}
+.pl_duration{
+	  color: #95acb7;
+}
+
 
 #title {
 	font-size: 10pt;

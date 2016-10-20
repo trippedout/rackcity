@@ -158,9 +158,13 @@ define(function (require)
 		$('#btnCloseInfo').click(function() {
 			$("#sc_form_info").hide();
 		});
-
-
-
+		$('#trk_playlist').click(function() {
+			$("#sc_form_playlist").show();
+		});
+		$('#btnClosePlaylist').click(function() {
+			$("#sc_form_playlist").hide();
+		});
+		
 
 		//init listeners
 		// $("#loadSample").click( loadSampleAudio);

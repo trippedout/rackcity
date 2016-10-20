@@ -31,6 +31,12 @@ $testLocal = TRUE;
 		<span  id="info_msg"></span><br/><br/>
 		<input type="button" value="CLOSE" id="btnCloseInfo"/>
 	</form>
+
+	<form id="sc_form_playlist"  style="display:none;">
+		<h3 class="title">PLAYLIST</h3>
+		<span  id="playlist"></span><br/><br/>
+		<input type="button" value="CLOSE" id="btnClosePlaylist"/>
+	</form>
 </div>
 
 <div id="loading"></div>
@@ -64,7 +70,7 @@ $testLocal = TRUE;
 	 <span id="trk_next"><i class="fa fa-step-forward" aria-hidden="true"></i></span>
 	 <span id="trk_pause" style="display:none;"><i class="fa fa-pause" aria-hidden="true"></i></span>
 	 <span id="trk_play"><i class="fa fa-play" aria-hidden="true"></i></span>
-	
+	 <span id="trk_playlist"><i class="fa fa-list" aria-hidden="true"></i></span>
 	
 </div>
 <!--

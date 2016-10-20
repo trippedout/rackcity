@@ -339,6 +339,18 @@ define(function (require)
 	var client_id;
 	function initAudio(tracks, sc_client_id){
 		playList=tracks;
+		playlist_html="";
+		var i=0;
+		tracks.forEach(function(t){
+			playlist_html+="<div id='trackid' trkid='"+ ++i +"'>"
+			if(t.artwork_url)
+				playlist_html+="<img src='"+ t.artwork_url +"' class='pl_img'/>"
+			else
+				playlist_html+="<div class='pl_img'>&nbsp;</div>";
+			playlist_html+="<span class='pl_title'>"+ t.title +"</span><br/>"
+			playlist_html+="<span class='pl_duration' class='light'>"+ formatSeconds(t.duration/1000) +"</span></div>"	
+		});
+		$("#playlist").html(playlist_html);
 		curtrack=0;
 		client_id=sc_client_id;
 		_initAudio(playList[curtrack],client_id);
@@ -349,18 +361,39 @@ define(function (require)
 			nextTrack();
 			return;
 		}
-		var date = new Date(null);
-		date.setSeconds(audioContext.currentTime); // specify value for SECONDS here
-		var t=date.toISOString().substr(11, 8);
+
+		var t=formatSeconds(audioContext.currentTime);
 		$("#trackCount").text("" + (curtrack+1) + "/" +playList.length);
 		$("#timestamp").text(t);
 		setTimeout(updateTimestamp,1000);
+	}
+
+	function formatSeconds(s){
+		var date = new Date(null);
+		date.setSeconds(s); // specify value for SECONDS here
+		return date.toISOString().substr(11, 8);
 	}
 
 	function nextTrack(){
 		duration=100000;
 		$("#timestamp").text("00:00:00");
 		curtrack++;
+		if(curtrack>playList.length-1)
+			curtrack=0;
+		_initAudio(playList[curtrack],client_id);
+	}
+
+	$(document).ready(function(){
+		$(document).on("click", "#trackid", function(){
+			gotoTrack($(this).attr("trkid"));
+			$("#sc_form_playlist").hide();
+		});
+	});
+
+	function gotoTrack(id){
+		duration=100000;
+		$("#timestamp").text("00:00:00");
+		curtrack=parseInt(id)-1;
 		if(curtrack>playList.length-1)
 			curtrack=0;
 		_initAudio(playList[curtrack],client_id);
