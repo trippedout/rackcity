@@ -16,7 +16,7 @@ define(function (require)
 	var mouseX = 0, mouseY = 0, windowHalfX = window.innerWidth / 2, windowHalfY = window.innerHeight / 2, camera, scene, renderer, material, container;
 	var width = window.innerWidth;
 	var height = window.innerHeight;
-	var sc_client_id = '08b1532d93712c611b7a82da20ac52ca';
+	var sc_client_id = '043b42ab41aba38a605be0931d554f4b';
 	var camXDist = 500, camYDist = 850;
 	var controls;
 	var dropArea;
@@ -60,7 +60,7 @@ define(function (require)
 		    // Browser has no idea what WebGL is. Suggest they
 		    // get a new browser by presenting the user with link to
 		    // http://get.webgl.org
-		    console.log("fuck, no webgl");
+			showInfo("ERROR","Your compure don't support webgl... really??");
 		    return;   
 		}
 		
@@ -69,7 +69,7 @@ define(function (require)
 	    var gl = canvas.getContext("webgl")
 		if (!gl) {
 
-			console.log("WOO");
+			showInfo("ERROR","Your browser don't support webgl... check with another one.");
 		    // Browser could not initialize WebGL. User probably needs to
 		    // update their drivers or get a new browser. Present a link to
 		    // http://get.webgl.org/troubleshooting
