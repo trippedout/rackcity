@@ -288,8 +288,8 @@ define(function (require)
 				
 		    }
 		    
-		    var mesh = new THREE.PointCloud( geometry, material );
-			var topDotsMesh = new THREE.PointCloud( topDotsGeom, topDotsMaterial );
+		    var mesh = new THREE.Points( geometry, material );
+			var topDotsMesh = new THREE.Points( topDotsGeom, topDotsMaterial );
 			
 			// add it to the scene
 			scene.add(mesh);
@@ -390,6 +390,11 @@ define(function (require)
 	function _initAudio(track, sc_client_id)
 	{	
 		console.log("RackCity::initAudio() ");
+		if(track.artwork_url){
+			$("#artwork_img").attr("src",track.artwork_url);
+			$("#artwork_img").show();
+		}else
+			$("#artwork_img").hide();
 		console.log(track);
 
 		var url = track.stream_url + "?client_id=" + sc_client_id;
@@ -442,11 +447,13 @@ define(function (require)
 
 			//todo - push all this to the shader along with 
 			//texture filled with actual float array of sound buffer
-			if(beatdetect.isKick() ) bassSize = 4;//.75; //console.log("isKick()");
+			if (bassSize<0.26)bassSize=0.26;
+			if(beatdetect.isKick() ) bassSize = 4;//.75; console.log("isKick()");
 			if(bassSize > 0) bassSize -= .25;
 			drawLines(bassSize, large_roads_lines);
-			
-			if(beatdetect.isSnare() ) trebSize = 2.75;// console.log("isSnare()");
+
+			if (trebSize<0.06)trebSize=0.06;
+			if(beatdetect.isSnare() ) trebSize = 2.75; //console.log("isSnare()");
 			if(trebSize > 0) trebSize -= .05;
 			drawLines(trebSize, small_road_lines);
 

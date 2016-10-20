@@ -114,6 +114,14 @@ input[type=button] {
 	line-height:20px;
 }
 
+#artwork{
+	float: left;
+  	margin-right: 10px;
+}
+#artwork_img{
+	height:75px;
+}
+
 #latlng {
 	text-align: left;
 	position: absolute;
@@ -132,6 +140,7 @@ input[type=button] {
 	font-size: 12pt;
 	letter-spacing: .2em;
 	line-height: 24px;
+	width: 100%;
 }
 
 #title {
