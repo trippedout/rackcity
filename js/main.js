@@ -5,6 +5,7 @@
 var TESTING = false;
 var APP_ENGINE = false;
 var USE_STATS = false;
+var USE_PROXY = false;
 
 define(function (require) 
 {
@@ -243,6 +244,12 @@ define(function (require)
 		scene.add(skybox);
 	}
 
+	function loadStream(url){
+		rackcity.initAudio([{"stream_url":url,"duration":36000000,"artwork_url":""}], sc_client_id);
+		$("#chooseLocation").show();
+		animate();
+	}
+
 	function loadSoundCloud(url){
 		//event.preventDefault();
 
@@ -289,7 +296,10 @@ define(function (require)
 		{
 			soundCloudUrl=$("#sc_url").val();
 			event.preventDefault();
-			loadSoundCloud(soundCloudUrl);
+			if(soundCloudUrl.indexOf("soundcloud")>0)
+				loadSoundCloud(soundCloudUrl);
+			else
+				loadStream(soundCloudUrl);
 		});
 	}
 
@@ -382,7 +392,12 @@ define(function (require)
 				currentLocationData = data;
 				currentLocationCenterPt = center_pt;
 				if(soundCloudUrl!="")
-					loadSoundCloud(soundCloudUrl);
+					{
+						if(soundCloudUrl.indexOf("soundcloud")>0)
+							loadSoundCloud(soundCloudUrl);
+						else
+							loadStream(soundCloudUrl);
+					}
 				else
 					$("#sc_form").show();
 			}
