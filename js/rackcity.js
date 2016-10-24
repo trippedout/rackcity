@@ -351,8 +351,9 @@ define(function (require)
 			playlist_html+="<span class='pl_duration' class='light'>"+ formatSeconds(t.duration/1000) +"</span></div>"	
 		});
 		$("#playlist").html(playlist_html);
-		//curtrack=0;
-		curtrack=Math.floor((Math.random() * tracks.length-1));
+		curtrack=0;
+		if(tracks.length>1)
+			curtrack=Math.floor((Math.random() * tracks.length-1));
 		client_id=sc_client_id;
 		_initAudio(playList[curtrack],client_id);
 	}
@@ -474,8 +475,17 @@ define(function (require)
 			var array =  new Uint8Array(analyser.frequencyBinCount);
 	        analyser.getByteFrequencyData(array);
 	 		
+
 	 		var floats = new Float32Array(analyser.frequencyBinCount);
-	 		analyser.getFloatTimeDomainData(floats);
+			if(analyser.getFloatTimeDomainData)
+	 			analyser.getFloatTimeDomainData(floats);
+			else{
+				var bytes = new Uint8Array(analyser.frequencyBinCount); // Uint8Array should be the same length as the fftSize 
+				analyser.getByteTimeDomainData(bytes);
+				for(i=0;i<analyser.frequencyBinCount;i++){
+					floats[i]=bytes[i];
+				}
+			}
 	 		
 			beatdetect.detect(floats);
 
@@ -492,6 +502,10 @@ define(function (require)
 			drawLines(trebSize, small_road_lines);
 
 			var lowsMidsHighs = [
+
+		/*		getAverageVolume(array.subarray(750, 1024))*(bassSize*0.1+1),
+				getAverageVolume(array.subarray(180, 750))*(bassSize*0.1+1),
+				getAverageVolume(array.subarray(0, 180))*(bassSize*0.1+1)*/
 				getAverageVolume(array.subarray(750, 1024)),
 				getAverageVolume(array.subarray(180, 750)),
 				getAverageVolume(array.subarray(0, 180))
