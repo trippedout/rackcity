@@ -7,6 +7,7 @@ define(function (require)
 
 	var scene;
 
+
 	var all_features, small_roads, large_roads, buildings;
 	var center_xy;
 
@@ -14,6 +15,9 @@ define(function (require)
 	var building_dots = [], building_top_dots = [];
 
 	var lowsMidsHighsBuildingsGroups = [];
+
+	var playback_started=false;
+	var playback_delay = 0;
 
 	function setup(sc)
 	{
@@ -288,8 +292,8 @@ define(function (require)
 				
 		    }
 		    
-		    var mesh = new THREE.PointCloud( geometry, material );
-			var topDotsMesh = new THREE.PointCloud( topDotsGeom, topDotsMaterial );
+		    var mesh = new THREE.Points( geometry, material );
+			var topDotsMesh = new THREE.Points( topDotsGeom, topDotsMaterial );
 			
 			// add it to the scene
 			scene.add(mesh);
@@ -333,21 +337,136 @@ define(function (require)
 	 * initAudio() 
 	 * pass URL to start audioContext for managing visualization
 	 **/
-	function initAudio(track, sc_client_id)
+	var audioContext;
+	var playList=[];
+	var curtrack=0;
+	var client_id;
+	function initAudio(tracks, sc_client_id){
+		playList=tracks;
+		playlist_html="";
+		var i=0;
+		tracks.forEach(function(t){
+			playlist_html+="<div id='trackid' trkid='"+ ++i +"'>"
+			if(t.artwork_url)
+				playlist_html+="<img src='"+ t.artwork_url +"' class='pl_img'/>"
+			else
+				playlist_html+="<div class='pl_img'>&nbsp;</div>";
+			playlist_html+="<span class='pl_title'>"+ t.title +"</span><br/>"
+			playlist_html+="<span class='pl_duration' class='light'>"+ formatSeconds(t.duration/1000) +"</span></div>"	
+		});
+		$("#playlist").html(playlist_html);
+		curtrack=0;
+		if(tracks.length>1)
+			curtrack=Math.floor((Math.random() * tracks.length-1));
+		client_id=sc_client_id;
+		_initAudio(playList[curtrack],client_id);
+	}
+
+	function updateTimestamp(){
+		if((audioContext.currentTime-playback_delay)>duration){ 
+			nextTrack();
+			return;
+		}
+
+		var t=formatSeconds(audioContext.currentTime-playback_delay);
+		$("#trackCount").text("" + (curtrack+1) + "/" +playList.length);
+		if(playback_started)
+			$("#timestamp").text(t);
+		else
+			$("#timestamp").text("00:00:00");
+		setTimeout(updateTimestamp,1000);
+	}
+
+	function formatSeconds(s){
+		var date = new Date(null);
+		date.setSeconds(s); // specify value for SECONDS here
+		return date.toISOString().substr(11, 8);
+	}
+
+	function nextTrack(){
+		duration=100000;
+		$("#timestamp").text("00:00:00");
+		curtrack++;
+		if(curtrack>playList.length-1)
+			curtrack=0;
+		_initAudio(playList[curtrack],client_id);
+	}
+
+	$(document).ready(function(){
+		$(document).on("click", "#trackid", function(){
+			gotoTrack($(this).attr("trkid"));
+			$("#sc_form_playlist").hide();
+		});
+	});
+
+	function gotoTrack(id){
+		duration=100000;
+		$("#timestamp").text("00:00:00");
+		curtrack=parseInt(id)-1;
+		if(curtrack>playList.length-1)
+			curtrack=0;
+		_initAudio(playList[curtrack],client_id);
+	}
+
+	function prevTrack(){
+		duration=100000;
+		$("#timestamp").text("00:00:00");
+		curtrack--;
+		if(curtrack<0)
+			curtrack=playList.length-1;
+		_initAudio(playList[curtrack],client_id);
+	}
+
+	function pauseTrack(){
+		audioContext.suspend();
+		$("#trk_pause").hide();
+		$("#trk_play").show();
+	}
+
+	function playTrack(){
+		audioContext.resume();
+		$("#trk_pause").show();
+		$("#trk_play").hide();
+	}
+
+	function _initAudio(track, sc_client_id)
 	{	
 		console.log("RackCity::initAudio() ");
+		if(!track){
+			console.log("track null");
+			$("#sc_form").show();
+			return;
+		}
+		playback_started=false;
+		if(track.artwork_url){
+			$("#artwork_img").attr("src",track.artwork_url);
+			$("#artwork_img").show();
+		}else
+			$("#artwork_img").hide();
 		console.log(track);
 
 		var url = track.stream_url + "?client_id=" + sc_client_id;
 		
-		duration = track.duration;
+		duration = track.duration/1000;
 		
+		$("#trk_prev").unbind().click(prevTrack);
+		$("#trk_next").unbind().click(nextTrack);
 		$("#title").text(track.title);
 		$("#songinfo").show();
-
+		setTimeout(updateTimestamp,1000);
 		
 		window.AudioContext = window.AudioContext || window.webkitAudioContext;
-		var audioContext = new AudioContext();
+		if(audioContext && audioContext.close)
+			audioContext.close();
+		audioContext = new AudioContext();
+
+		audioContext.ended = function() {
+			console.log("song over"); //well this shit doesnt work
+		}
+		$("#trk_pause").show();
+		$("#trk_play").hide();
+		$("#trk_pause").unbind().click(pauseTrack);
+		$("#trk_play").unbind().click(playTrack);
 		var sampleRate = audioContext.sampleRate;
 
 		var beatdetect = new FFT.BeatDetect(1024, sampleRate);
@@ -363,28 +482,46 @@ define(function (require)
 
         var bassSize = 0;
         var trebSize = 0;
-
+		
 		audioController.initAudio(url, audioContext, source, analyser, function() 
 		{
 			var array =  new Uint8Array(analyser.frequencyBinCount);
 	        analyser.getByteFrequencyData(array);
-	 		
+	 		if(!playback_started){
+				 playback_started=true;
+				 playback_delay=audioContext.currentTime;
+			 }
+
 	 		var floats = new Float32Array(analyser.frequencyBinCount);
-	 		analyser.getFloatTimeDomainData(floats);
+			if(analyser.getFloatTimeDomainData)
+	 			analyser.getFloatTimeDomainData(floats);
+			else{
+				var bytes = new Uint8Array(analyser.frequencyBinCount); // Uint8Array should be the same length as the fftSize 
+				analyser.getByteTimeDomainData(bytes);
+				for(i=0;i<analyser.frequencyBinCount;i++){
+					floats[i]=bytes[i];
+				}
+			}
 	 		
 			beatdetect.detect(floats);
 
 			//todo - push all this to the shader along with 
 			//texture filled with actual float array of sound buffer
-			if(beatdetect.isKick() ) bassSize = 4;//.75; //console.log("isKick()");
+			if (bassSize<0.26)bassSize=0.26;
+			if(beatdetect.isKick() ) bassSize = 4;//.75; console.log("isKick()");
 			if(bassSize > 0) bassSize -= .25;
 			drawLines(bassSize, large_roads_lines);
-			
-			if(beatdetect.isSnare() ) trebSize = 2.75;// console.log("isSnare()");
+
+			if (trebSize<0.06)trebSize=0.06;
+			if(beatdetect.isSnare() ) trebSize = 2.75; //console.log("isSnare()");
 			if(trebSize > 0) trebSize -= .05;
 			drawLines(trebSize, small_road_lines);
 
 			var lowsMidsHighs = [
+
+		/*		getAverageVolume(array.subarray(750, 1024))*(bassSize*0.1+1),
+				getAverageVolume(array.subarray(180, 750))*(bassSize*0.1+1),
+				getAverageVolume(array.subarray(0, 180))*(bassSize*0.1+1)*/
 				getAverageVolume(array.subarray(750, 1024)),
 				getAverageVolume(array.subarray(180, 750)),
 				getAverageVolume(array.subarray(0, 180))

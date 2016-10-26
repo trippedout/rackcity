@@ -40,7 +40,7 @@ span {
 
 #soundcloud {
 	position: absolute;
-	top: 45%;
+	top: 120px;
 	width: 100%;
 	display: block;
 	margin-left: auto;
@@ -49,6 +49,9 @@ span {
 
 #soundcloud form {
 	display:inline-block;
+	background-color: rgba(3, 3, 3, 0.56);
+  	border: 1px solid rgb(202, 199, 199);
+	padding: 10px;
 }
 
 #soundcloud .title {
@@ -76,7 +79,20 @@ input[type=text] {
 input[type=submit] {
     font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif;
     border: hidden;
-    width: 200px;
+    /*width: 200px;*/
+    padding: 5px 10px; 
+    background:transparent;
+    color: #ffffff;
+    text-align: center;
+	cursor: pointer;
+	letter-spacing: .3em;   
+	font-size: 9.5pt;
+	font-weight: 200;
+}
+input[type=button] {
+    font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif;
+    border: hidden;
+    /*width: 200px;*/
     padding: 5px 10px; 
     background:transparent;
     color: #ffffff;
@@ -98,6 +114,18 @@ input[type=submit] {
 	line-height:20px;
 }
 
+#info_msg{
+	  margin: 30px;
+}
+
+#artwork{
+	float: left;
+  	margin-right: 10px;
+}
+#artwork_img{
+	height:75px;
+}
+
 #latlng {
 	text-align: left;
 	position: absolute;
@@ -111,15 +139,61 @@ input[type=submit] {
 #songinfo {
 	text-align: left;
 	position: absolute;
-	top: 40px;
+	top: 10px;
 	left: 40px;
 	font-size: 12pt;
 	letter-spacing: .2em;
 	line-height: 24px;
+	width: 100%;
 }
+
+#sc_form_playlist{
+	min-width: 400px;
+  	font-size: 12px;
+}
+#sc_form_position{
+	min-width: 400px;
+}
+
+#playlist{
+	max-height: 300px;
+  	overflow-y: auto;
+}
+#trackid{
+	margin: 0 10px 5px 10px;
+	text-align: left;
+	clear: both;
+	cursor: pointer;
+}
+.pl_img{
+	height: 30px;
+	width: 30px;
+  	float: left;
+  	margin-right: 10px;
+}
+.pl_duration{
+	  color: #95acb7;
+}
+.latlon{
+	width: 100px !important;
+  	margin-left: 10px;
+	
+}
+
+.pointer{
+	cursor: pointer;
+}
+
 
 #title {
 	font-size: 10pt;
+	text-decoration: underline;
+	cursor: pointer;
+}
+#share {
+	font-size: 10pt;
+	text-decoration: underline;
+	cursor: pointer;
 }
 
 #timestamp {

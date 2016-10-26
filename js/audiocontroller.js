@@ -2,17 +2,35 @@ define(function (require)
 {
 	var javascriptNode;
 
+	function getUrlRedirect(url,returnfunc){
+		$.post(url, {}, function(response, status, request) {
+			if (status == 280) {
+				// you need to return the redirect url
+				returnfunc(response.redirectUrl);
+			} else {
+				returnfunc(url);
+			}
+		});
+	}
+
 	function initAudio(url, audioContext, source, analyser, audioProcessCallback)
 	{
 		var buffer;
 		var audioBuffer;
 
-		// Load 
+
 		var request = new XMLHttpRequest();
-		request.open("GET", url, true);
+		if (USE_PROXY){
+			request.open("GET", "proxy.php", true);
+			request.setRequestHeader('X-Proxy-URL',url);
+			console.log("proxy.php?csurl=" + encodeURIComponent(url));
+		}else{
+			request.open("GET", url, true);
+		}
+		
 		request.responseType = "arraybuffer";
 
-
+		
 		// filter for testing low freq's alone
 		var filter = audioContext.createBiquadFilter();
 		filter.type = "lowpass"; 
@@ -28,6 +46,8 @@ define(function (require)
 		// gainNode.gain.value = 0;			
 
 		request.onload = function() {
+			//audioContext.close();
+
 			audioContext.decodeAudioData(request.response, function(buffer) {
 				source.buffer = buffer;
 				source.loop = true;
@@ -41,10 +61,21 @@ define(function (require)
 				source.start(0.0);
 
 			}, function(e) {
-				console.log("error" + e);
+				console.log("error: " + e);
 			});
 
 
+		};
+		request.onerror = function (e) {
+			console.log("Error Status: " + e.target.status);
+			if(!USE_PROXY){
+				console.log("try via proxy");
+				USE_PROXY=true;
+				initAudio(url, audioContext, source, analyser, audioProcessCallback)
+			}else{
+				console.log("unrecoverable error");
+			}
+			
 		};
 		request.send();
 	}

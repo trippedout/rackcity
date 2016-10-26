@@ -1,43 +1,89 @@
 <?php 
-$testLocal = FALSE;
+$testLocal = TRUE;
 ?>
 <!doctype html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://ogp.me/ns/fb#">
 <head>
 <title>Rack City</title>
 <meta charset="utf-8">
+<meta property="og:image" content="preview.jpg" />
+
 <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400' rel='stylesheet' type='text/css'>
 <link href="css/styles.css" rel="stylesheet" type="text/css">
+<link href="css/font-awesome.css" rel="stylesheet" type="text/css">
+
 </head>
+<body>
+
 <h1>RACK CITY</h1>
 <div id="soundcloud">
-<form id="sc_form"  style="display:none;">
-	<h3 class="title">ENTER SOUNDCLOUD LINK</h3><br/>
-	<input type="text" id="sc_url" name="url" placeholder="soundcloud url" value="https://soundcloud.com/lidogotsongs/zhu-faded-lido-remix"/><br/>
-	<input type="submit" value="SUBMIT"/>
-</form>
+	<form id="sc_form"  style="display:none;">
+		<h3 class="title">ENTER SOUNDCLOUD LINK</h3><br/>
+		<input type="text" id="sc_url" name="url" placeholder="soundcloud url" value="https://soundcloud.com/muterecords/sets/goldfrapp-believer-remixes"/><br/>
+		<input type="button" value="CANCEL" id="btnCancel"/> <input type="submit" value="SUBMIT"/>
+	</form>
+
+
+	<form id="sc_form_share"  style="display:none;">
+		<h3 class="title">SHARE LINK</h3><br/>
+		<input type="text" id="sc_url_share" name="url" placeholder="rack city url" value="" readonly="true"/><br/>
+		<input type="button" value="CLOSE" id="btnClose"/>
+	</form>
+
+	<form id="sc_form_position"  style="display:none;">
+		<h3 class="title">POSITION</h3><br/>
+		LATITUDE: <input type="text" id="sc_latitude" class="latlon"/><br/>
+		LONGITUDE: <input type="text" id="sc_longitude" class="latlon"/><br/>
+		<input type="button" value="CANCEL" id="btnClosePosition"/> <input type="submit" value="SUBMIT"/>
+	</form>
+
+	<form id="sc_form_info"  style="display:none;">
+		<h3 class="title" id="info_title"></h3>
+		<span  id="info_msg"></span><br/><br/>
+		<input type="button" value="CLOSE" id="btnCloseInfo"/>
+	</form>
+
+	<form id="sc_form_playlist"  style="display:none;">
+		<h3 class="title">PLAYLIST</h3>
+		<div  id="playlist"></div><br/><br/>
+		<input type="button" value="CLOSE" id="btnClosePlaylist"/>
+	</form>
 </div>
+
 <div id="loading"></div>
-<div id="latlng">	
-	<span>LATITUDE: </span><span id="lat" class="light"></span>
+<div id="latlng">	 
+	<span>LATITUDE: </span><span id="lat" class="light pointer"></span>
 	<br/>
-	<span>LONGITUDE: </span><span id="lng" class="light"></span>
+	<span>LONGITUDE: </span><span id="lng" class="light pointer"></span>
+	<br/>
+	<span id="share" class="pointer">SHARE LINK</span>
 </div>
 <div id="chooseLocation" class="styled-select" style="display:none;">
    <select id="locationSelect" dir="rtl">
    		<option>CURRENT</option>
-		<option>CHICAGO</option>
-		<option>DOWNTOWN NYC</option>
-		<option>TOKYO</option>
-		<option>LONDON</option>
+	
+		
+		
    </select>
 </div>
 <div id="songinfo" style="display:none;">
-	<span id="title">FANCY</span>
-	<!-- <br/>
-	<span id="timestamp" class="light">0 : 00 : 00</span> -->
+	 <div id="artwork"><img id="artwork_img" /></div>
+	 <span id="title">FANCY</span>
+	 <br/>
+	 <span id="timestamp" class="light">00:00:00</span>
+	 <br/>
+	 <span id="trk_prev"><i class="fa fa-step-backward pointer" aria-hidden="true"></i></span> 
+	 <span id="trackCount">0/0</span> 
+	 <span id="trk_next"><i class="fa fa-step-forward pointer" aria-hidden="true"></i></span>
+	 <span id="trk_pause" style="display:none;"><i class="fa fa-pause pointer" aria-hidden="true"></i></span>
+	 <span id="trk_play"><i class="fa fa-play pointer" aria-hidden="true"></i></span>
+	 <span id="trk_playlist"><i class="fa fa-list pointer" aria-hidden="true"></i></span>
+	
 </div>
+<!--
 <a href="https://github.com/trippedout/rackcity"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
+-->
+
 <?php 
 if(!$testLocal)
 	echo '<script src="//cdnjs.cloudflare.com/ajax/libs/three.js/r68/three.min.js"></script>
