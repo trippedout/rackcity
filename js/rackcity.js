@@ -434,6 +434,7 @@ define(function (require)
 		console.log("RackCity::initAudio() ");
 		if(!track){
 			console.log("track null");
+			$("#sc_form").show();
 			return;
 		}
 		playback_started=false;
