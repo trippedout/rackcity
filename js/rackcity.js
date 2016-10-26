@@ -7,6 +7,7 @@ define(function (require)
 
 	var scene;
 
+
 	var all_features, small_roads, large_roads, buildings;
 	var center_xy;
 
@@ -14,6 +15,9 @@ define(function (require)
 	var building_dots = [], building_top_dots = [];
 
 	var lowsMidsHighsBuildingsGroups = [];
+
+	var playback_started=false;
+	var playback_delay = 0;
 
 	function setup(sc)
 	{
@@ -359,14 +363,17 @@ define(function (require)
 	}
 
 	function updateTimestamp(){
-		if(audioContext.currentTime>duration){
+		if((audioContext.currentTime-playback_delay)>duration){ 
 			nextTrack();
 			return;
 		}
 
-		var t=formatSeconds(audioContext.currentTime);
+		var t=formatSeconds(audioContext.currentTime-playback_delay);
 		$("#trackCount").text("" + (curtrack+1) + "/" +playList.length);
-		$("#timestamp").text(t);
+		if(playback_started)
+			$("#timestamp").text(t);
+		else
+			$("#timestamp").text("00:00:00");
 		setTimeout(updateTimestamp,1000);
 	}
 
@@ -425,6 +432,11 @@ define(function (require)
 	function _initAudio(track, sc_client_id)
 	{	
 		console.log("RackCity::initAudio() ");
+		if(!track){
+			console.log("track null");
+			return;
+		}
+		playback_started=false;
 		if(track.artwork_url){
 			$("#artwork_img").attr("src",track.artwork_url);
 			$("#artwork_img").show();
@@ -474,7 +486,10 @@ define(function (require)
 		{
 			var array =  new Uint8Array(analyser.frequencyBinCount);
 	        analyser.getByteFrequencyData(array);
-	 		
+	 		if(!playback_started){
+				 playback_started=true;
+				 playback_delay=audioContext.currentTime;
+			 }
 
 	 		var floats = new Float32Array(analyser.frequencyBinCount);
 			if(analyser.getFloatTimeDomainData)
