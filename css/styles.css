@@ -163,6 +163,7 @@ input[type=button] {
 	margin: 0 10px 5px 10px;
 	text-align: left;
 	clear: both;
+	cursor: pointer;
 }
 .pl_img{
 	height: 30px;
@@ -183,9 +184,6 @@ input[type=button] {
 	cursor: pointer;
 }
 
-#trackid{
-	cursor: pointer;
-}
 
 #title {
 	font-size: 10pt;
